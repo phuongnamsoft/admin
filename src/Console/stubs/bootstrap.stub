@@ -1,0 +1,26 @@
+<?php
+
+use PNS\Admin\Admin;
+use PNS\Admin\Grid;
+use PNS\Admin\Form;
+use PNS\Admin\Grid\Filter;
+use PNS\Admin\Show;
+
+/**
+ * PNS-admin - admin builder based on Laravel.
+ * @author jqh <https://github.com/jqhph>
+ *
+ * Bootstraper for Admin.
+ *
+ * Here you can remove builtin form field:
+ *
+ * extend custom field:
+ * PNS\Admin\Form::extend('php', PHPEditor::class);
+ * PNS\Admin\Grid\Column::extend('php', PHPEditor::class);
+ * PNS\Admin\Grid\Filter::extend('php', PHPEditor::class);
+ *
+ * Or require js and css assets:
+ * Admin::css('/packages/prettydocs/css/styles.css');
+ * Admin::js('/packages/prettydocs/js/main.js');
+ *
+ */
