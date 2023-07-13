@@ -30,7 +30,7 @@ class PublishCommand extends Command
      *
      * @var string
      */
-    protected $description = "Re-publish dcat-admin's assets, configuration, language and migration files. If you want overwrite the existing files, you can add the `--force` option";
+    protected $description = "Re-publish pns-admin's assets, configuration, language and migration files. If you want overwrite the existing files, you can add the `--force` option";
 
     /**
      * @var \Illuminate\Filesystem\Filesystem
@@ -75,25 +75,25 @@ class PublishCommand extends Command
         $tags = [];
 
         if ($this->option('lang')) {
-            $this->tags[] = 'dcat-admin-lang';
+            $this->tags[] = 'pns-admin-lang';
         }
         if ($this->option('migrations')) {
-            $tags[] = 'dcat-admin-migrations';
+            $tags[] = 'pns-admin-migrations';
         }
         if ($this->option('assets')) {
-            $tags[] = 'dcat-admin-assets';
+            $tags[] = 'pns-admin-assets';
         }
         if ($this->option('config')) {
-            $tags[] = 'dcat-admin-config';
+            $tags[] = 'pns-admin-config';
         }
 
         // 设置默认标签.
         if (! $tags && ! $this->tags) {
-            $this->tags[] = 'dcat-admin-lang';
+            $this->tags[] = 'pns-admin-lang';
             $tags = [
-                'dcat-admin-migrations',
-                'dcat-admin-assets',
-                'dcat-admin-config',
+                'pns-admin-migrations',
+                'pns-admin-assets',
+                'pns-admin-config',
             ];
         }
 

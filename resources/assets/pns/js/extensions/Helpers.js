@@ -5,7 +5,7 @@ export default class Helpers {
     constructor(PNS) {
         PNS.helpers = this;
 
-        this.dcat = PNS;
+        this.pns = PNS;
 
         // 延迟触发，消除重复触发
         this.debounce = debounce;
@@ -195,7 +195,7 @@ export default class Helpers {
 
     // 预览图片
     previewImage(src, width, title) {
-        let PNS = this.dcat,
+        let PNS = this.pns,
             img = new Image(),
             win = this.isset(window.top) ? top : window,
             clientWidth = Math.ceil(win.screen.width * 0.6),
@@ -247,7 +247,7 @@ export default class Helpers {
 
     // 异步加载
     asyncRender(url, done, error) {
-        let PNS = this.dcat;
+        let PNS = this.pns;
 
         $.ajax(url).then(function (data) {
             done(

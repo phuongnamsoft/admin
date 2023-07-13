@@ -614,10 +614,10 @@ class Admin
     public static function registerApiRoutes()
     {
         $attributes = [
-            'prefix'     => admin_base_path('dcat-api'),
+            'prefix'     => admin_base_path('pns-api'),
             'middleware' => config('admin.route.middleware'),
             'namespace'  => 'PNS\Admin\Http\Controllers',
-            'as'         => 'dcat-api.',
+            'as'         => 'pns-api.',
         ];
 
         app('router')->group($attributes, function ($router) {

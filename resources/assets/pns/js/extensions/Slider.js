@@ -1,5 +1,5 @@
 
-let idPrefix = 'dcat-slider-',
+let idPrefix = 'pns-slider-',
     template = `<div id="{id}" class="slider-panel {class}">
     <div class="slider-content position-fixed p-1 ps ps--active-y"></div>
 </div>`;

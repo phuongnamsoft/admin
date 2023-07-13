@@ -1,7 +1,7 @@
 
 export default class Translator{
     constructor(PNS, lang) {
-        this.dcat = PNS;
+        this.pns = PNS;
         this.lang = lang;
 
         for (let i in lang) {
@@ -24,7 +24,7 @@ export default class Translator{
      */
     trans(label, replace) {
         let _this = this,
-            helpers = _this.dcat.helpers;
+            helpers = _this.pns.helpers;
 
         if (typeof _this.lang !== 'object') {
             return label;

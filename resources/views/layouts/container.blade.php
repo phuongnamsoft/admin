@@ -1,5 +1,5 @@
 <body
-        class="dcat-admin-body sidebar-mini layout-fixed {{ $configData['body_class']}} {{ $configData['sidebar_class'] }}
+        class="pns-admin-body sidebar-mini layout-fixed {{ $configData['body_class']}} {{ $configData['sidebar_class'] }}
         {{ $configData['navbar_class'] === 'fixed-top' ? 'navbar-fixed-top' : '' }} " >
 
 <script>
@@ -24,7 +24,7 @@
     <p class="clearfix blue-grey lighten-2 mb-0 text-center">
             <span class="text-center d-block d-md-inline-block mt-25">
                 Powered by
-                <a target="_blank" href="https://github.com/jqhph/dcat-admin">PNS Admin</a>
+                <a target="_blank" href="https://github.com/jqhph/pns-admin">PNS Admin</a>
                 <span>&nbsp;·&nbsp;</span>
                 v{{ PNS\Admin\Admin::VERSION }}
             </span>

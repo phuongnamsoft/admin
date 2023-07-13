@@ -101,7 +101,7 @@ class MinifyCommand extends Command
      */
     protected function publishAssets()
     {
-        $options = ['--provider' => 'PNS\Admin\AdminServiceProvider', '--force' => true, '--tag' => 'dcat-admin-assets'];
+        $options = ['--provider' => 'PNS\Admin\AdminServiceProvider', '--force' => true, '--tag' => 'pns-admin-assets'];
 
         $this->call('vendor:publish', $options);
     }
@@ -188,7 +188,7 @@ class MinifyCommand extends Command
      */
     protected function getColorFile()
     {
-        return $this->packagePath.'/resources/assets/dcat/sass/theme/_primary.scss';
+        return $this->packagePath.'/resources/assets/pns/sass/theme/_primary.scss';
     }
 
     /**

@@ -30,12 +30,12 @@ function themeCss(path) {
   return `${distPath}/${path}${sf}.css`
 }
 
-function dcatPath(path) {
-  return 'resources/assets/dcat/' + path;
+function pnsPath(path) {
+  return 'resources/assets/pns/' + path;
 }
 
-function dcatDistPath(path) {
-  return distPath + '/dcat/' + path;
+function pnsDistPath(path) {
+  return distPath + '/pns/' + path;
 }
 
 
@@ -53,13 +53,13 @@ mix.sass('resources/assets/adminlte/scss/AdminLTE.scss', themeCss('adminlte/admi
 mix.js('resources/assets/adminlte/js/AdminLTE.js', distPath + '/adminlte/adminlte.js').sourceMaps();
 
 // 复制第三方插件文件夹
-mix.copyDirectory(dcatPath('plugins'), dcatDistPath('plugins'));
+mix.copyDirectory(pnsPath('plugins'), pnsDistPath('plugins'));
 // 打包app.js
-mix.js(dcatPath('js/dcat-app.js'), dcatDistPath('js/dcat-app.js')).sourceMaps();
+mix.js(pnsPath('js/pns-app.js'), pnsDistPath('js/pns-app.js')).sourceMaps();
 // 打包app.scss
-mix.sass(dcatPath('sass/dcat-app.scss'), themeCss('dcat/css/dcat-app')).sourceMaps();
-mix.copy(dcatPath('sass/nunito.css'), `${distPath}/dcat/css/nunito.css`);
+mix.sass(pnsPath('sass/pns-app.scss'), themeCss('pns/css/pns-app')).sourceMaps();
+mix.copy(pnsPath('sass/nunito.css'), `${distPath}/pns/css/nunito.css`);
 
 // 打包所有 extra 里面的所有js和css
-mixAssetsDir('dcat/extra/*.js', (src, dest) => mix.js(src, dest));
-mixAssetsDir('dcat/extra/*.scss', (src, dest) => mix.sass(src, dest.replace('scss', 'css')));
+mixAssetsDir('pns/extra/*.js', (src, dest) => mix.js(src, dest));
+mixAssetsDir('pns/extra/*.scss', (src, dest) => mix.sass(src, dest.replace('scss', 'css')));

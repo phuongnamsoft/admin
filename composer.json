@@ -1,9 +1,9 @@
 {
-    "name": "dcat/laravel-admin",
-    "description": "dcat admin",
+    "name": "pns/laravel-admin",
+    "description": "pns admin",
     "type": "library",
-    "keywords": ["dcat", "laravel", "admin", "grid", "form", "laravel admin"],
-    "homepage": "https://github.com/jqhph/dcat-admin",
+    "keywords": ["pns", "laravel", "admin", "grid", "form", "laravel admin"],
+    "homepage": "https://github.com/jqhph/pns-admin",
     "license": "MIT",
     "authors": [
         {

@@ -59,7 +59,7 @@ body.dark-mode {
     color: darken($white, 2.5%);
   }
 
-  .dcat-loading:not(.layui-layer-shade) {
+  .pns-loading:not(.layui-layer-shade) {
     background-color: inherit!important;
   }
 
@@ -483,7 +483,7 @@ body.dark-mode {
   }
 
   .dd-handle,
-  .card.dcat-box .card-header,
+  .card.pns-box .card-header,
   .box-header.with-border,
   .with-border,
   .box.box-solid.box-default {
@@ -810,44 +810,44 @@ body.dark-mode {
 
 
   // ---- step
-  .dcat-step {
-    .dcat-step-title {
+  .pns-step {
+    .pns-step-title {
       color: $body-dark-font-color;
     }
 
-    .active > .dcat-step-item-container > .dcat-step-content > .dcat-step-title,
-    .done > .dcat-step-item-container > .dcat-step-content > .dcat-step-title {
+    .active > .pns-step-item-container > .pns-step-content > .pns-step-title,
+    .done > .pns-step-item-container > .pns-step-content > .pns-step-title {
       color: lighten($body-dark-font-color, 8%);
     }
 
-    .dcat-step-icons {
+    .pns-step-icons {
       border-color: lighten($body-dark-font-color, 4%);
-      > .dcat-step-icon {
+      > .pns-step-icon {
         color: lighten($body-dark-font-color, 4%);
       }
     }
 
-    .dcat-step-title:after {
+    .pns-step-title:after {
       background-color: $body-dark-font-color;
     }
 
-    .active > .dcat-step-item-container > .dcat-step-content > .dcat-step-title:after {
+    .active > .pns-step-item-container > .pns-step-content > .pns-step-title:after {
       background-color: lighten($body-dark-font-color, 4%);
     }
 
-    .done .dcat-step-icons {
+    .done .pns-step-icons {
       background-color: transparent;
       border-color: $primary;
     }
-    .done .dcat-step-icons > .dcat-step-icon {
+    .done .pns-step-icons > .pns-step-icon {
       color: $primary
     }
   }
-  .dcat-done-step .st-title {
+  .pns-done-step .st-title {
     color: $body-dark-heading-color
   }
 
-  .dcat-done-step .st-desc {
+  .pns-done-step .st-desc {
     color: $body-dark-font-color;
   }
 

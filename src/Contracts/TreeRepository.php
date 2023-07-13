@@ -1,6 +1,6 @@
 <?php
 /*
- * This file is part of the dcat-admin.
+ * This file is part of the pns-admin.
  *
  * (c) jqh <841324345@qq.com>
  *

@@ -28,13 +28,13 @@ class UninstallCommand extends Command
      */
     public function handle()
     {
-        if (! $this->confirm('Are you sure to uninstall dcat-admin?')) {
+        if (! $this->confirm('Are you sure to uninstall pns-admin?')) {
             return;
         }
 
         $this->removeFilesAndDirectories();
 
-        $this->line('<info>Uninstalling dcat-admin!</info>');
+        $this->line('<info>Uninstalling pns-admin!</info>');
     }
 
     /**

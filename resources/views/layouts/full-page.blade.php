@@ -25,7 +25,7 @@
     {!! PNS\Admin\Admin::asset()->cssToHtml() !!}
 </head>
 
-<body class="dcat-admin-body full-page {{ $configData['body_class'] }}">
+<body class="pns-admin-body full-page {{ $configData['body_class'] }}">
 
 <script>
     var PNS = CreatePNS({!! PNS\Admin\Admin::jsVariables() !!});

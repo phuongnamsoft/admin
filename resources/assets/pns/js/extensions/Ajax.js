@@ -1,7 +1,7 @@
 
 export default class Ajax {
     constructor(PNS) {
-        this.dcat = PNS;
+        this.pns = PNS;
 
         PNS.handleAjaxError = this.handleAjaxError.bind(this);
         PNS.handleJsonResponse = this.handleJsonResponse.bind(this);
@@ -60,7 +60,7 @@ export default class Ajax {
     }
 
     handleAjaxError(xhr, text, msg) {
-        let PNS = this.dcat,
+        let PNS = this.pns,
             json = xhr.responseJSON || {},
             _msg = json.message;
 
@@ -108,7 +108,7 @@ export default class Ajax {
 
     // 处理接口返回数据
     handleJsonResponse(response, options) {
-        let PNS = this.dcat,
+        let PNS = this.pns,
             data = response.data;
 
         if (! response) {

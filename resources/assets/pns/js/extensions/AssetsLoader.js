@@ -3,7 +3,7 @@ export default class AssetsLoader {
     constructor(PNS) {
         let _this = this;
 
-        _this.dcat = PNS;
+        _this.pns = PNS;
 
         PNS.assets = {
             // 加载js脚本，并触发 ready 事件
@@ -77,11 +77,11 @@ export default class AssetsLoader {
     }
 
     fire() {
-        this.dcat.wait();
+        this.pns.wait();
 
         // js加载完毕 触发 ready 事件
         // setTimeout用于保证在所有js代码最后执行
-        setTimeout(this.dcat.triggerReady, 1);
+        setTimeout(this.pns.triggerReady, 1);
     }
 
     toString(th) {

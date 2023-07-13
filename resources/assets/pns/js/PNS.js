@@ -147,7 +147,7 @@ export default class PNS {
             initialized[selector].disconnect();
         }
 
-        $(document).trigger('dcat:init:off', selector, initialized[selector])
+        $(document).trigger('pns:init:off', selector, initialized[selector])
 
         initialized[selector] = null;
     }
@@ -173,7 +173,7 @@ export default class PNS {
     wait(value) {
         waiting = value !== false;
 
-        $document.trigger('dcat:waiting');
+        $document.trigger('pns:waiting');
 
         return this
     }

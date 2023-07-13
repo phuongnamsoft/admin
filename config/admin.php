@@ -4,10 +4,10 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | dcat-admin name
+    | pns-admin name
     |--------------------------------------------------------------------------
     |
-    | This value is the name of dcat-admin, This setting is displayed on the
+    | This value is the name of pns-admin, This setting is displayed on the
     | login page.
     |
     */
@@ -15,18 +15,18 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | dcat-admin logo
+    | pns-admin logo
     |--------------------------------------------------------------------------
     |
     | The logo of all admin pages. You can also set it as an image by using a
     | `img` tag, eg '<img src="http://logo-url" alt="Admin logo">'.
     |
     */
-    'logo' => '<img src="/vendor/dcat-admin/images/logo.png" width="35"> &nbsp;PNS Admin',
+    'logo' => '<img src="/vendor/pns-admin/images/logo.png" width="35"> &nbsp;PNS Admin',
 
     /*
     |--------------------------------------------------------------------------
-    | dcat-admin mini logo
+    | pns-admin mini logo
     |--------------------------------------------------------------------------
     |
     | The logo of all admin pages when the sidebar menu is collapsed. You can
@@ -34,11 +34,11 @@ return [
     | '<img src="http://logo-url" alt="Admin logo">'.
     |
     */
-    'logo-mini' => '<img src="/vendor/dcat-admin/images/logo.png">',
+    'logo-mini' => '<img src="/vendor/pns-admin/images/logo.png">',
 
     /*
     |--------------------------------------------------------------------------
-    | dcat-admin favicon
+    | pns-admin favicon
     |--------------------------------------------------------------------------
     |
     */
@@ -56,7 +56,7 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | dcat-admin route settings
+    | pns-admin route settings
     |--------------------------------------------------------------------------
     |
     | The routing configuration of the admin page, including the path prefix,
@@ -78,7 +78,7 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | dcat-admin install directory
+    | pns-admin install directory
     |--------------------------------------------------------------------------
     |
     | The installation directory of the controller and routing configuration
@@ -90,7 +90,7 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | dcat-admin html title
+    | pns-admin html title
     |--------------------------------------------------------------------------
     |
     | Html title for all pages.
@@ -118,7 +118,7 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | dcat-admin auth setting
+    | pns-admin auth setting
     |--------------------------------------------------------------------------
     |
     | Authentication settings for all admin pages. Include an authentication
@@ -196,7 +196,7 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | dcat-admin helpers setting.
+    | pns-admin helpers setting.
     |--------------------------------------------------------------------------
     */
     'helpers' => [
@@ -205,7 +205,7 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | dcat-admin permission setting
+    | pns-admin permission setting
     |--------------------------------------------------------------------------
     |
     | Permission settings for all admin pages.
@@ -227,7 +227,7 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | dcat-admin menu setting
+    | pns-admin menu setting
     |--------------------------------------------------------------------------
     |
     */
@@ -252,7 +252,7 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | dcat-admin upload setting
+    | pns-admin upload setting
     |--------------------------------------------------------------------------
     |
     | File system configuration for form upload files and images, including
@@ -274,10 +274,10 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | dcat-admin database settings
+    | pns-admin database settings
     |--------------------------------------------------------------------------
     |
-    | Here are database settings for dcat-admin builtin model & tables.
+    | Here are database settings for pns-admin builtin model & tables.
     |
     */
     'database' => [
@@ -363,6 +363,6 @@ return [
     'extension' => [
         // When you use command `php artisan admin:ext-make` to generate extensions,
         // the extension files will be generated in this directory.
-        'dir' => base_path('dcat-admin-extensions'),
+        'dir' => base_path('pns-admin-extensions'),
     ],
 ];

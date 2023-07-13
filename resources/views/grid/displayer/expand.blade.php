@@ -25,7 +25,7 @@
             if (url) {
                 var collapse = $('#grid-collapse-'+key);
                 collapse.find('div').loading();
-                $('.dcat-loading').css({position: 'inherit', 'padding-top': '70px'});
+                $('.pns-loading').css({position: 'inherit', 'padding-top': '70px'});
 
                 PNS.helpers.asyncRender(url+'&key='+rowKey, function (html) {
                     collapse.html(html);

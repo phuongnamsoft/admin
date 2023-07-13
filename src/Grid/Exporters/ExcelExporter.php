@@ -13,7 +13,7 @@ class ExcelExporter extends AbstractExporter
         parent::__construct($titles);
 
         if (! class_exists(Excel::class)) {
-            throw new RuntimeException('To use exporter, please install [dcat/easy-excel] first.');
+            throw new RuntimeException('To use exporter, please install [pns/easy-excel] first.');
         }
     }
 
