@@ -1,14 +1,14 @@
 {
-    "name": "pns/laravel-admin",
+    "name": "phuongnamsoft/admin",
     "description": "pns admin",
     "type": "library",
     "keywords": ["pns", "laravel", "admin", "grid", "form", "laravel admin"],
-    "homepage": "https://github.com/jqhph/pns-admin",
+    "homepage": "https://github.com/phuongnamsoft/admin",
     "license": "MIT",
     "authors": [
         {
-            "name": "jqh",
-            "email": "841324345@qq.com"
+            "name": "phuongnamsoft",
+            "email": "phuongnam@phuongnam.org"
         }
     ],
     "require": {
