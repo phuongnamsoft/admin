@@ -66,7 +66,7 @@ return [
             'driver'     => 'local',
             'root'       => public_path('uploads'),
             'visibility' => 'public',
-            'url'        => 'http://localhost:8000/uploads/',
+            'url'        => '/uploads/',
         ],
 
     ],
