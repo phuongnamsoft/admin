@@ -1,9 +1,9 @@
 laravel-admin
 =====
 
-[![Build Status](https://travis-ci.org/z-song/laravel-admin.svg?branch=master)](https://travis-ci.org/z-song/laravel-admin)
+[![Build Status](https://travis-ci.org/phuongnamsoft/laravel-admin.svg?branch=master)](https://travis-ci.org/phuongnamsoft/laravel-admin)
 [![StyleCI](https://styleci.io/repos/48796179/shield)](https://styleci.io/repos/48796179)
-[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/z-song/laravel-admin/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/z-song/laravel-admin/?branch=master)
+[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/phuongnamsoft/laravel-admin/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/phuongnamsoft/laravel-admin/?branch=master)
 
 `laravel-admin` is administrative interface builder for laravel which can help you build CRUD backends just with few lines of code.
 

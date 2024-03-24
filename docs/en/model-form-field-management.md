@@ -82,7 +82,7 @@ EOT;
 
 ```
 
->Static resources in the class can also be imported from outside, see [Editor.php](https://github.com/z-song/laravel-admin/blob/1.3/src/Form/Field/Editor.php)
+>Static resources in the class can also be imported from outside, see [Editor.php](https://github.com/phuongnamsoft/admin/blob/1.3/src/Form/Field/Editor.php)
 
 Create a view file `resources/views/admin/php-editor.blade.php`:
 
