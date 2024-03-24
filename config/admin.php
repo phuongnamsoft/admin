@@ -191,6 +191,10 @@ return [
         'menu_table' => 'admin_menu',
         'menu_model' => PNS\Admin\Auth\Database\Menu::class,
 
+        // Menu table and model.
+        'extensions_table' => 'admin_extensions',
+        'extensions_model' => PNS\Admin\Auth\Database\Extension::class,
+
         // Pivot table for table above.
         'operation_log_table'    => 'admin_operation_log',
         'user_permissions_table' => 'admin_user_permissions',
