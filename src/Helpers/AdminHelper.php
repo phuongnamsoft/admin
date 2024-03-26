@@ -235,4 +235,9 @@ class AdminHelper
     {
         return config('admin.route.prefix') . '.' . $name;
     }
+
+    static function setTopAlert($message)
+    {
+        config(['admin.top_alert' => $message]);
+    }
 }
