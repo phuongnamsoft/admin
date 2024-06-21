@@ -1,6 +1,6 @@
 <?php
 
-namespace Encore\CodeMirror;
+namespace PNS\Admin\Form\Field;
 
 use PNS\Admin\Form\Field;
 

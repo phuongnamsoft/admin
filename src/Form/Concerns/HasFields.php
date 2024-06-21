@@ -59,6 +59,11 @@ use Illuminate\Support\Arr;
  * @method Field\HasMany        morphMany($relationName, $label = '', $callback)
  * @method Field\BelongsTo      belongsTo($column, $selectable, $label = '')
  * @method Field\BelongsToMany  belongsToMany($column, $selectable, $label = '')
+ * @method Field\JSONEditor     json($column, $label = '')
+ * @method Field\CKEditor       ckeditor($column, $label = '')
+ * @method Field\PythonEditor   python($column, $label = '')
+ * @method Field\PHPEditor      php($column, $label = '')
+
  */
 trait HasFields
 {
@@ -123,6 +128,11 @@ trait HasFields
         'morphMany'         => Field\HasMany::class,
         'belongsTo'         => Field\BelongsTo::class,
         'belongsToMany'     => Field\BelongsToMany::class,
+        'json'              => Field\JsonEditor::class,
+        'codeMirror'        => Field\CodeMirror::class,
+        'ckeditor'          => Field\CKEditor::class,
+        'php'               => Field\PHPEditor::class,
+        'python'            => Field\PythonEditor::class,
     ];
 
     /**
