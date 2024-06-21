@@ -1,5 +1,5 @@
 {
-    "name": "phuongnamsoft/admin",
+    "name": "pns/admin",
     "description": "laravel admin",
     "type": "library",
     "keywords": ["laravel", "admin", "grid", "form"],
@@ -13,7 +13,7 @@
     ],
     "require": {
         "php": ">=7.0.0",
-        "symfony/dom-crawler": "~3.1|~4.0|~5.0",
+        "symfony/dom-crawler": "~3.1|~4.0|~5.0|~6.0",
         "laravel/framework": ">=5.5",
         "doctrine/dbal": "3.*|4.*"
     },

@@ -45,6 +45,9 @@ class MenuController extends Controller
                     if ((new $menuModel())->withPermission()) {
                         $form->select('permission', trans('admin.permission'))->options($permissionModel::pluck('name', 'slug'));
                     }
+
+                    $form->switch('status', 'Status')->default(1);
+
                     $form->hidden('_token')->default(csrf_token());
 
                     $column->append((new Box(trans('admin.new'), $form))->style('success'));
@@ -107,7 +110,11 @@ class MenuController extends Controller
         return $content
             ->title(trans('admin.menu'))
             ->description(trans('admin.edit'))
-            ->row($this->form()->edit($id));
+            ->row(function (Row $row) use ($id) {
+                $row->column(6, $this->treeView()->render());
+
+                $row->column(6, $this->form()->edit($id));
+            });
     }
 
     /**
@@ -133,6 +140,8 @@ class MenuController extends Controller
         if ($form->model()->withPermission()) {
             $form->select('permission', trans('admin.permission'))->options($permissionModel::pluck('name', 'slug'));
         }
+
+        $form->switch('status', 'Status')->default(1);
 
         $form->display('created_at', trans('admin.created_at'));
         $form->display('updated_at', trans('admin.updated_at'));

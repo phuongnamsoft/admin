@@ -387,7 +387,7 @@ return [
     | The global Grid action display class.
     |--------------------------------------------------------------------------
     */
-    'grid_action_class' => \PNS\Admin\Grid\Displayers\DropdownActions::class,
+    'grid_action_class' => \PNS\Admin\Grid\Displayers\Actions::class,
 
     /*
     |--------------------------------------------------------------------------

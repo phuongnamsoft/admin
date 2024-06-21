@@ -121,9 +121,21 @@ class AdminTablesSeeder extends Seeder
                 'icon'      => 'fa-history',
                 'uri'       => 'auth/logs',
             ],
+            [
+                'parent_id' => 2,
+                'order'     => 8,
+                'title'     => 'Extensions',
+                'icon'      => 'fa-plug',
+                'uri'       => 'auth/extensions',
+            ],
         ]);
 
         // add role to menu.
         Menu::find(2)->roles()->save(Role::first());
+
+        // add extensions.
+        Extension::truncate();
+
+        
     }
 }
