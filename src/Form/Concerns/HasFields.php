@@ -120,6 +120,7 @@ trait HasFields
         'multipleImage'     => Field\MultipleImage::class,
         'captcha'           => Field\Captcha::class,
         'listbox'           => Field\Listbox::class,
+        'dualListBox'       => Field\DualListBox::class,
         'table'             => Field\Table::class,
         'timezone'          => Field\Timezone::class,
         'keyValue'          => Field\KeyValue::class,
