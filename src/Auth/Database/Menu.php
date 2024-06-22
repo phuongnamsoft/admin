@@ -7,6 +7,7 @@ use PNS\Admin\Traits\ModelTree;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Support\Facades\DB;
+use PNS\Admin\Traits\BaseModelTrait;
 
 /**
  * Class Menu.
@@ -18,6 +19,7 @@ use Illuminate\Support\Facades\DB;
 class Menu extends Model
 {
     use DefaultDatetimeFormat;
+    use BaseModelTrait;
     use ModelTree {
         ModelTree::boot as treeBoot;
     }
