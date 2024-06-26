@@ -63,6 +63,7 @@ use Illuminate\Support\Arr;
  * @method Field\CKEditor       ckeditor($column, $label = '')
  * @method Field\PythonEditor   python($column, $label = '')
  * @method Field\PHPEditor      php($column, $label = '')
+ * @method Field\TinyMCE        tinymce($column, $label = '')
 
  */
 trait HasFields
@@ -134,6 +135,7 @@ trait HasFields
         'ckeditor'          => Field\CKEditor::class,
         'php'               => Field\PHPEditor::class,
         'python'            => Field\PythonEditor::class,
+        'tinymce'           => Field\TinyMCE::class,
     ];
 
     /**
