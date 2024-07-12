@@ -23,7 +23,7 @@ trait BaseModelTrait
         return $query;
     }
 
-    static public function updateBy($data, $cond = array()) {
+    static public function updateBy($data, $cond = []) {
         $query = new static;
         if (!empty($cond)) {
             foreach ($cond as $k => $v) {
@@ -33,7 +33,7 @@ trait BaseModelTrait
         return $query->update($data);
     }
 
-    static public function getRowBy($cond = array()) {
+    static public function getRowBy($cond = []) {
         $query = new static;
         if (!empty($cond)) {
             foreach ($cond as $k => $v) {
@@ -67,10 +67,15 @@ trait BaseModelTrait
                 return intval(trim($id));
             }, explode(',' ,$ids));
         }
+
+        if (is_numeric($ids)) {
+            $ids = [$ids];
+        }
+
         return static::where('id', $ids)->delete();
     }
 
-    static public function deleteBy($cond = array()) {
+    static public function deleteBy($cond = []) {
         $query = new self;
         if (!empty($cond)) {
             foreach ($cond as $k => $v) {
