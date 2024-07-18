@@ -135,7 +135,5 @@ class AdminTablesSeeder extends Seeder
 
         // add extensions.
         Extension::truncate();
-
-        
     }
 }
