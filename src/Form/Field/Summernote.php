@@ -4,9 +4,9 @@ namespace PNS\Admin\Form\Field;
 
 use PNS\Admin\Form\Field\Textarea;
 
-class CKEditor extends Textarea
+class Summernote extends Textarea
 {
-    protected $view = 'laravel-admin::summernote';
+    protected $view = 'laravel-admin::form.summernote';
 
     protected static $css = [
         'vendor/laravel-admin/summernote/summernote.css',

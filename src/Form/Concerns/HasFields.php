@@ -64,6 +64,7 @@ use Illuminate\Support\Arr;
  * @method Field\PythonEditor   python($column, $label = '')
  * @method Field\PHPEditor      php($column, $label = '')
  * @method Field\TinyMCE        tinymce($column, $label = '')
+ * @method Field\Summernote     summernote($column, $label = '')
 
  */
 trait HasFields
@@ -136,6 +137,7 @@ trait HasFields
         'php'               => Field\PHPEditor::class,
         'python'            => Field\PythonEditor::class,
         'tinymce'           => Field\TinyMCE::class,
+        'summernote'           => Field\Summernote::class,
     ];
 
     /**
