@@ -3,7 +3,7 @@
 namespace App\Admin;
 
 use Illuminate\Support\ServiceProvider;
-use PNS\Admin\Extensions\CKEditor\CKEditorServiceProvider;
+use PNS\Admin;
 
 class ExtensionServiceProvider extends ServiceProvider {
 
@@ -13,6 +13,12 @@ class ExtensionServiceProvider extends ServiceProvider {
      * @return void
      */
     public function register() {
-        $this->app->register(CKEditorServiceProvider::class);
+        if (Extensions\MediaManager\MediaManager::boot()) {
+            $extension = new Extensions\MediaManager\MediaManager;
+            if ($views = $extension->views()) {
+                $this->loadViewsFrom($views, 'laravel-admin-media');
+            }
+            Admin::extend('media-manager', Extensions\MediaManager\MediaManager::class);
+        }
     }
 }

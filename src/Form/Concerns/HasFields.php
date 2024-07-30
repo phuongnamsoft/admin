@@ -137,7 +137,7 @@ trait HasFields
         'php'               => Field\PHPEditor::class,
         'python'            => Field\PythonEditor::class,
         'tinymce'           => Field\TinyMCE::class,
-        'summernote'           => Field\Summernote::class,
+        'summernote'        => Field\Summernote::class,
     ];
 
     /**

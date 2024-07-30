@@ -2,7 +2,7 @@
 
 namespace PNS\Admin\Extensions\CKEditor;
 
-use PNS\Admin\Admin;
+use PNS\Admin;
 use PNS\Admin\Form;
 use Illuminate\Support\ServiceProvider;
 
