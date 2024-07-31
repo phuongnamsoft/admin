@@ -240,4 +240,51 @@ class AdminHelper
     {
         config(['admin.top_alert' => $message]);
     }
+    
+    static function getExtensionsModelClass()
+    {
+        return config('admin.database.extensions_model');
+    }
+
+    static function getExtensionsTable()
+    {
+        return config('admin.database.extensions_table');
+    }
+
+    static function getPermissionsModelClass()
+    {
+        return config('admin.database.permissions_model');
+    }
+
+    static function getPermissionsTable()
+    {
+        return config('admin.database.permissions_table');
+    }
+
+    static function getRolesModelClass()
+    {
+        return config('admin.database.roles_model');
+    }
+
+    static function getRolesTable()
+    {
+        return config('admin.database.roles_table');
+    }
+
+    static function getRoleUsersTable()
+    {
+        return config('admin.database.role_users_table');
+    }
+
+    static function getRolePermissionsTable()
+    {
+        return config('admin.database.role_permissions_table');
+    }
+
+    static function getRoleMenuTable()
+    {
+        return config('admin.database.role_menu_table');
+    }
+
+
 }

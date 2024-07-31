@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
+use PNS\Admin\Helpers\AdminHelper;
 
 abstract class Extension
 {
@@ -403,6 +404,22 @@ abstract class Extension
             'slug'        => $slug,
             'http_path'   => '/'.trim($path, '/'),
             'http_method' => $methods,
+        ]);
+    }
+
+    /**
+     * Create a permission for this extension.
+     *
+     * @param       $name
+     * @param       $slug
+     */
+    protected static function createExtension($name, $slug, $status = 1)
+    {
+        $extensionModel = AdminHelper::getExtensionsModelClass();
+
+        $extensionModel::create([
+            'name'        => $name,
+            'slug'        => $slug,
         ]);
     }
 
