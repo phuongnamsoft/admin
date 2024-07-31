@@ -8,7 +8,7 @@ use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Storage;
 
-class LightboxDisplayer extends AbstractDisplayer
+class Lightbox extends AbstractDisplayer
 {
     public $options = [
         'type' => 'image'

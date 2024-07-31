@@ -30,6 +30,8 @@ use Illuminate\Support\Arr;
  * @method $this suffix($suffix, $delimiter = '&nbsp;')
  * @method $this secret($dotCount = 6)
  * @method $this limit($limit = 100, $end = '...')
+ * @method $this lightbox($options = [])
+ * @method $this gallery($options = [])
  */
 trait ExtendDisplay
 {
@@ -59,6 +61,8 @@ trait ExtendDisplay
         'suffix'        => Displayers\Suffix::class,
         'secret'        => Displayers\Secret::class,
         'limit'         => Displayers\Limit::class,
+        'lightbox'      => Displayers\Lightbox::class,
+        'gallery'       => Displayers\Gallery::class,
     ];
 
     /**
