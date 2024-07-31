@@ -29,7 +29,7 @@ class Menu extends Model
      *
      * @var array
      */
-    protected $fillable = ['parent_id', 'order', 'title', 'icon', 'uri', 'permission'];
+    protected $fillable = ['parent_id', 'order', 'title', 'icon', 'uri', 'permission', 'status'];
 
     /**
      * Create a new Eloquent model instance.
@@ -69,7 +69,7 @@ class Menu extends Model
         $connection = config('admin.database.connection') ?: config('database.default');
         $orderColumn = DB::connection($connection)->getQueryGrammar()->wrap($this->orderColumn);
 
-        $byOrder = 'ROOT ASC,'.$orderColumn;
+        $byOrder = 'ROOT ASC,' . $orderColumn;
 
         $query = static::query();
 
@@ -77,7 +77,7 @@ class Menu extends Model
             $query->with('roles');
         }
 
-        return $query->selectRaw('*, '.$orderColumn.' ROOT')->orderByRaw($byOrder)->get()->toArray();
+        return $query->selectRaw('*, ' . $orderColumn . ' ROOT')->orderByRaw($byOrder)->get()->toArray();
     }
 
     /**
