@@ -3,7 +3,8 @@
 namespace App\Admin;
 
 use Illuminate\Support\ServiceProvider;
-use PNS\Admin;
+use PNS\Admin\Extensions\LogViewer\LogViewerServiceProvider;
+use PNS\Admin\Extensions\MediaManager\MediaManagerServiceProvider;
 
 class ExtensionServiceProvider extends ServiceProvider {
 
@@ -13,12 +14,7 @@ class ExtensionServiceProvider extends ServiceProvider {
      * @return void
      */
     public function register() {
-        if (Extensions\MediaManager\MediaManager::boot()) {
-            $extension = new Extensions\MediaManager\MediaManager;
-            if ($views = $extension->views()) {
-                $this->loadViewsFrom($views, 'laravel-admin-media');
-            }
-            Admin::extend('media-manager', Extensions\MediaManager\MediaManager::class);
-        }
+        $this->app->register(MediaManagerServiceProvider::class);
+        $this->app->register(LogViewerServiceProvider::class);
     }
 }
