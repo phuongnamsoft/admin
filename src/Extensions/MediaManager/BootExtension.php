@@ -1,8 +1,6 @@
 <?php
 
-namespace App\Admin\Extensions\MediaManager;
-
-use PNS\Admin\Admin;
+namespace PNS\Admin\Extensions\MediaManager;
 
 trait BootExtension {
 

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Admin\Extensions\MediaManager;
+namespace PNS\Admin\Extensions\MediaManager;
 
 use PNS\Admin\Exception\Handler;
 use PNS\Admin\Extension;

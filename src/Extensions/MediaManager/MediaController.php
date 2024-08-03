@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Admin\Extensions\MediaManager;
+namespace PNS\Admin\Extensions\MediaManager;
 
 use PNS\Admin\Facades\Admin;
 use PNS\Admin\Layout\Content;
