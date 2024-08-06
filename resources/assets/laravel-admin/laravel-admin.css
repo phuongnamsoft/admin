@@ -83,3 +83,7 @@ a.editable-empty {
 .file-input .glyphicon-folder-open {
     display: inline;
 }
+
+.toggle-field-password {
+    cursor: pointer;
+}
