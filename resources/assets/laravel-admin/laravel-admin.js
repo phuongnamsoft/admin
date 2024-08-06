@@ -117,7 +117,7 @@ $(function () {
         $('.sidebar-form .autocomplete').val($(this).text());
     });
 
-    $('.toggle-field-password').click(function () {
+    $('body').on('click', '.toggle-field-password', function () {
         var $input = $(this).closest('.input-group').find('input');
         $(this).toggleClass('fa-eye fa-eye-slash');
         if ($input.attr('type') === 'password') {
