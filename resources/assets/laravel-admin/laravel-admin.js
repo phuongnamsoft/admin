@@ -116,6 +116,16 @@ $(function () {
     $('.sidebar-form .dropdown-menu li a').click(function (){
         $('.sidebar-form .autocomplete').val($(this).text());
     });
+
+    $('body').on('click', '.toggle-field-password', function () {
+        var $input = $(this).closest('.input-group').find('input');
+        $(this).toggleClass('fa-eye fa-eye-slash');
+        if ($input.attr('type') === 'password') {
+            $input.attr('type', 'text');
+        } else {
+            $input.attr('type', 'password');
+        }
+    });
 });
 
 $(window).scroll(function() {
@@ -194,5 +204,4 @@ $('#totop').on('click', function (e) {
 
         return $.when.apply($, _arr);
     }
-
 })(jQuery);
