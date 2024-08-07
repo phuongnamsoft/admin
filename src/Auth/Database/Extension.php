@@ -54,6 +54,4 @@ class Extension extends Model
     {
         return is_string($menuIds) ? array_filter(array_map('intval', json_decode($menuIds))) : (array) $menuIds;
     }
-
-    
 }
