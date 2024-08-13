@@ -20,7 +20,7 @@ class PythonEditor extends CodeMirror
     protected $options = [
         'mode' => [
             'name' => 'python',
-            'version' => $this->version,
+            'version' => 3,
             'singleLineStringErrors' => false,
         ],
         'lineNumbers' => true,
