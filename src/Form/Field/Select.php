@@ -386,8 +386,6 @@ EOT;
      */
     public function readOnly()
     {
-        //移除特定字段名称,增加MultipleSelect的修订
-        //没有特定字段名可以使多个readonly的JS代码片段被Admin::script的array_unique精简代码
         $script = <<<'EOT'
 $("form select").on("select2:opening", function (e) {
     if($(this).attr('readonly') || $(this).is(':hidden')){

@@ -1581,16 +1581,16 @@ class Field implements Renderable
      *
      * @return \Illuminate\Config\Repository|mixed
      */
-    public static function config($key = null, $default = null)
-    {
-        $name = array_search(get_called_class(), Admin::$extensions);
+    // public static function config($key = null, $default = null)
+    // {
+    //     $name = array_search(get_called_class(), Admin::$extensions);
 
-        if (is_null($key)) {
-            $key = sprintf('admin.fields.%s', strtolower($name));
-        } else {
-            $key = sprintf('admin.fields.%s.%s', strtolower($name), $key);
-        }
+    //     if (is_null($key)) {
+    //         $key = sprintf('admin.fields.%s', strtolower($name));
+    //     } else {
+    //         $key = sprintf('admin.fields.%s.%s', strtolower($name), $key);
+    //     }
 
-        return config($key, $default);
-    }
+    //     return config($key, $default);
+    // }
 }
