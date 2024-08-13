@@ -3,6 +3,7 @@
 namespace App\Admin;
 
 use Illuminate\Support\ServiceProvider;
+use PNS\Admin\Extensions\Helpers\HelpersServiceProvider;
 use PNS\Admin\Extensions\LogViewer\LogViewerServiceProvider;
 use PNS\Admin\Extensions\MediaManager\MediaManagerServiceProvider;
 
@@ -16,5 +17,6 @@ class ExtensionServiceProvider extends ServiceProvider {
     public function register() {
         $this->app->register(MediaManagerServiceProvider::class);
         $this->app->register(LogViewerServiceProvider::class);
+        $this->app->register(HelpersServiceProvider::class);
     }
 }

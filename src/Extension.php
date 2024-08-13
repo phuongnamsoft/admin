@@ -413,13 +413,15 @@ abstract class Extension
      * @param       $name
      * @param       $slug
      */
-    protected static function createExtension($name, $slug, $status = 1)
+    protected static function createExtension($name, $slug, $status = 1, $menuIds = [])
     {
         $extensionModel = AdminHelper::getExtensionsModelClass();
 
         $extensionModel::create([
             'name'        => $name,
             'slug'        => $slug,
+            'menu_ids'    => $menuIds,
+            'status'      => $status,
         ]);
     }
 

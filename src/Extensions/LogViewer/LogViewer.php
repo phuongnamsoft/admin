@@ -10,8 +10,6 @@ use PNS\Admin\Admin;
  */
 class LogViewer extends Extension
 {
-    use BootExtension;
-
     /**
      * The log file name.
      *
