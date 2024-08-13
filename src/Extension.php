@@ -214,7 +214,7 @@ abstract class Extension
      * Get config set in config/admin.php.
      *
      * @param string $key
-     * @param null   $default
+     * @param string|null   $default
      *
      * @return \Illuminate\Config\Repository|mixed
      */
