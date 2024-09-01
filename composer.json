@@ -16,7 +16,9 @@
         "symfony/dom-crawler": "~3.1|~4.0|~5.0|~6.0",
         "laravel/framework": ">=5.5",
         "doctrine/dbal": "3.*|4.*",
-        "barryvdh/laravel-elfinder": "^0.5.3"
+        "barryvdh/laravel-elfinder": "^0.5.3",
+        "pragmarx/google2fa": "^8.0",
+        "bacon/bacon-qr-code": "^3.0"
     },
     "require-dev": {
         "laravel/laravel": ">=5.5",

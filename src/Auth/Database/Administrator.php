@@ -8,6 +8,7 @@ use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Support\Facades\Storage;
+use PNS\Admin\Traits\HasGoogle2Fa;
 
 /**
  * Class Administrator.
@@ -19,6 +20,7 @@ class Administrator extends Model implements AuthenticatableContract
     use Authenticatable;
     use HasPermissions;
     use DefaultDatetimeFormat;
+    use HasGoogle2Fa;
 
     protected $fillable = ['username', 'password', 'name', 'avatar'];
 

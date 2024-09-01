@@ -28,6 +28,8 @@ class CreateAdminTables extends Migration
             $table->string('name');
             $table->string('avatar')->nullable();
             $table->string('remember_token', 100)->nullable();
+            $table->boolean('google2fa_enabled')->default(0);
+            $table->string('google2fa_secret')->nullable();
             $table->timestamps();
         });
 

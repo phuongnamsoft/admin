@@ -85,35 +85,44 @@ class UserController extends AdminController
      */
     public function form()
     {
+        /** @var \PNS\Admin\Auth\Database\Administrator $userModel */
         $userModel = config('admin.database.users_model');
-        $permissionModel = config('admin.database.permissions_model');
-        $roleModel = config('admin.database.roles_model');
 
         $form = new Form(new $userModel());
 
-        $userTable = config('admin.database.users_table');
-        $connection = config('admin.database.connection');
+        $form->tab('Basic settings', function (Form $form) {
+            /** @var \PNS\Admin\Auth\Database\Permission $permissionModel */
+            $permissionModel = config('admin.database.permissions_model');
+            /** @var \PNS\Admin\Auth\Database\Role $roleModel */
+            $roleModel = config('admin.database.roles_model');
+            $userTable = config('admin.database.users_table');
+            $connection = config('admin.database.connection');
 
-        $form->display('id', 'ID');
-        $form->text('username', trans('admin.username'))
-            ->creationRules(['required', "unique:{$connection}.{$userTable}"])
-            ->updateRules(['required', "unique:{$connection}.{$userTable},username,{{id}}"]);
+            $form->display('id', 'ID');
+            $form->text('username', trans('admin.username'))
+                ->creationRules(['required', "unique:{$connection}.{$userTable}"])
+                ->updateRules(['required', "unique:{$connection}.{$userTable},username,{{id}}"]);
 
-        $form->text('name', trans('admin.name'))->rules('required');
-        $form->image('avatar', trans('admin.avatar'));
-        $form->password('password', trans('admin.password'))->rules('required|confirmed');
-        $form->password('password_confirmation', trans('admin.password_confirmation'))->rules('required')
-            ->default(function ($form) {
-                return $form->model()->password;
+            $form->text('name', trans('admin.name'))->rules('required');
+            $form->image('avatar', trans('admin.avatar'));
+            $form->password('password', trans('admin.password'))->rules('required|confirmed');
+            $form->password('password_confirmation', trans('admin.password_confirmation'))->rules('required');
+
+            $form->ignore(['password_confirmation']);
+
+            $form->multipleSelect('roles', trans('admin.roles'))->options($roleModel::all()->pluck('name', 'id'));
+            $form->multipleSelect('permissions', trans('admin.permissions'))->options($permissionModel::all()->pluck('name', 'id'));
+
+            $form->display('created_at', trans('admin.created_at'));
+            $form->display('updated_at', trans('admin.updated_at'));
+        });
+
+        $form->tab('Auth Settings', function (Form $form) {
+            $form->switch('google2fa_enabled', 'Google 2FA Enabled')->default(0)->when(1, function (Form $form) {
+                $form->text('google2fa_secret', 'Google 2FA Secret')->default(null)->readonly();
+                $form->html('<a href="https://play.google.com/store/apps/details?id=com.google.android.apps.authenticator2" target="_blank">Download Google Authenticator</a>')->plain();
             });
-
-        $form->ignore(['password_confirmation']);
-
-        $form->multipleSelect('roles', trans('admin.roles'))->options($roleModel::all()->pluck('name', 'id'));
-        $form->multipleSelect('permissions', trans('admin.permissions'))->options($permissionModel::all()->pluck('name', 'id'));
-
-        $form->display('created_at', trans('admin.created_at'));
-        $form->display('updated_at', trans('admin.updated_at'));
+        });
 
         $form->saving(function (Form $form) {
             if ($form->password && $form->model()->password != $form->password) {
