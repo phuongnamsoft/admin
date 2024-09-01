@@ -257,6 +257,7 @@ class Admin
         return Auth::guard($guard);
     }
 
+
     /**
      * Set navbar.
      *

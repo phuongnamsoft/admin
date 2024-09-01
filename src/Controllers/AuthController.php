@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Lang;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Validator;
+use PNS\Admin\Helpers\AdminHelper;
 
 class AuthController extends Controller
 {
@@ -65,6 +66,9 @@ class AuthController extends Controller
      */
     protected function loginValidator(array $data)
     {
+        $adminUserModel = AdminHelper::getAdminUserModelClass();
+        $adminUserModel = $adminUserModel::query()->where('username', $data[$this->username()])->first();   
+
         return Validator::make($data, [
             $this->username()   => 'required',
             'password'          => 'required',

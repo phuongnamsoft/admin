@@ -286,5 +286,8 @@ class AdminHelper
         return config('admin.database.role_menu_table');
     }
 
-
+    static function getAdminUserModelClass()
+    {
+        return config('admin.database.users_model');
+    }
 }

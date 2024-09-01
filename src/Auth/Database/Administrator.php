@@ -8,7 +8,7 @@ use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Support\Facades\Storage;
-use PNS\Admin\Traits\HasGoogle2Fa;
+use PragmaRX\Google2FA\Google2FA;
 
 /**
  * Class Administrator.
@@ -20,9 +20,8 @@ class Administrator extends Model implements AuthenticatableContract
     use Authenticatable;
     use HasPermissions;
     use DefaultDatetimeFormat;
-    use HasGoogle2Fa;
 
-    protected $fillable = ['username', 'password', 'name', 'avatar'];
+    protected $fillable = ['username', 'password', 'name', 'avatar', 'google2fa_secret', 'google2fa_enabled'];
 
     /**
      * Create a new Eloquent model instance.
@@ -90,5 +89,15 @@ class Administrator extends Model implements AuthenticatableContract
         $relatedModel = config('admin.database.permissions_model');
 
         return $this->belongsToMany($relatedModel, $pivotTable, 'user_id', 'permission_id');
+    }
+
+    public function verifyGoogle2fa($code):?bool
+    {
+        return (new Google2FA)->verifyKey($this->google2fa_secret, $code);
+    }
+
+    public function generateGoogle2faSecret():?string
+    {
+        return (new Google2FA)->generateSecretKey();
     }
 }
