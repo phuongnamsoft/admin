@@ -78,6 +78,7 @@ class AdminTablesSeeder extends Seeder
                 'title'     => 'Dashboard',
                 'icon'      => 'fa-bar-chart',
                 'uri'       => '/',
+                'status'   => 1,
             ],
             [
                 'parent_id' => 0,
@@ -85,6 +86,7 @@ class AdminTablesSeeder extends Seeder
                 'title'     => 'Admin',
                 'icon'      => 'fa-tasks',
                 'uri'       => '',
+                'status'   => 1,
             ],
             [
                 'parent_id' => 2,
@@ -92,6 +94,7 @@ class AdminTablesSeeder extends Seeder
                 'title'     => 'Users',
                 'icon'      => 'fa-users',
                 'uri'       => 'auth/users',
+                'status'   => 1,
             ],
             [
                 'parent_id' => 2,
@@ -99,6 +102,7 @@ class AdminTablesSeeder extends Seeder
                 'title'     => 'Roles',
                 'icon'      => 'fa-user',
                 'uri'       => 'auth/roles',
+                'status'   => 1,
             ],
             [
                 'parent_id' => 2,
@@ -106,6 +110,7 @@ class AdminTablesSeeder extends Seeder
                 'title'     => 'Permission',
                 'icon'      => 'fa-ban',
                 'uri'       => 'auth/permissions',
+                'status'   => 1,
             ],
             [
                 'parent_id' => 2,
@@ -113,6 +118,7 @@ class AdminTablesSeeder extends Seeder
                 'title'     => 'Menu',
                 'icon'      => 'fa-bars',
                 'uri'       => 'auth/menu',
+                'status'   => 1,
             ],
             [
                 'parent_id' => 2,
@@ -120,6 +126,7 @@ class AdminTablesSeeder extends Seeder
                 'title'     => 'Operation log',
                 'icon'      => 'fa-history',
                 'uri'       => 'auth/logs',
+                'status'   => 1,
             ],
             [
                 'parent_id' => 2,
@@ -127,6 +134,7 @@ class AdminTablesSeeder extends Seeder
                 'title'     => 'Extensions',
                 'icon'      => 'fa-plug',
                 'uri'       => 'auth/extensions',
+                'status'   => 1,
             ],
         ]);
 

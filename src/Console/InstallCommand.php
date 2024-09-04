@@ -56,7 +56,7 @@ class InstallCommand extends Command
     }
 
     /**
-     * Initialize the admAin directory.
+     * Initialize the admin directory.
      *
      * @return void
      */
