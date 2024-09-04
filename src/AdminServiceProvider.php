@@ -2,6 +2,7 @@
 
 namespace PNS\Admin;
 
+use App\Admin\ExtensionServiceProvider;
 use PNS\Admin\Layout\Content;
 use Illuminate\Routing\Router;
 use Illuminate\Support\Arr;
@@ -178,6 +179,8 @@ class AdminServiceProvider extends ServiceProvider
         $this->commands($this->commands);
 
         $this->macroRouter();
+
+        $this->app->register(ExtensionServiceProvider::class);
     }
 
     /**

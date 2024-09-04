@@ -88,6 +88,5 @@ class Helpers extends Extension
         }
 
         parent::createPermission('Admin helpers', 'ext.helpers', 'helpers/*');
-        parent::createExtension('helpers', 'helpers');
     }
 }
