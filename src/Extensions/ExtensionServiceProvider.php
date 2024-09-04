@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Admin;
+namespace App\Admin\Extensions;
 
 use Illuminate\Support\ServiceProvider;
 use PNS\Admin\Extensions\Helpers\HelpersServiceProvider;
