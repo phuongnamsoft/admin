@@ -15,7 +15,7 @@ class ExtensionServiceProvider extends ServiceProvider {
      * @return void
      */
     public function register() {
-        $this->app->register(MediaManagerServiceProvider::class);
+        // $this->app->register(MediaManagerServiceProvider::class);
         $this->app->register(LogViewerServiceProvider::class);
         $this->app->register(HelpersServiceProvider::class);
     }
