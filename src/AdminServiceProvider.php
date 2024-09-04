@@ -2,7 +2,7 @@
 
 namespace PNS\Admin;
 
-use App\Admin\Extensions\ExtensionServiceProvider;
+use PNS\Admin\Extensions\ExtensionServiceProvider;
 use PNS\Admin\Layout\Content;
 use Illuminate\Routing\Router;
 use Illuminate\Support\Arr;

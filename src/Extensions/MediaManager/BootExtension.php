@@ -20,12 +20,12 @@ trait BootExtension {
     protected static function registerRoutes() {
         parent::routes(function ($router) {
             /* @var \Illuminate\Routing\Router $router */
-            $router->get('media', 'App\Admin\Extensions\MediaManager\MediaController@index')->name('media-index');
-            $router->get('media/download', 'App\Admin\Extensions\MediaManager\MediaController@download')->name('media-download');
-            $router->delete('media/delete', 'App\Admin\Extensions\MediaManager\MediaController@delete')->name('media-delete');
-            $router->put('media/move', 'App\Admin\Extensions\MediaManager\MediaController@move')->name('media-move');
-            $router->post('media/upload', 'App\Admin\Extensions\MediaManager\MediaController@upload')->name('media-upload');
-            $router->post('media/folder', 'App\Admin\Extensions\MediaManager\MediaController@newFolder')->name('media-new-folder');
+            $router->get('media', 'PNS\Admin\Extensions\MediaManager\MediaController@index')->name('media-index');
+            $router->get('media/download', 'PNS\Admin\Extensions\MediaManager\MediaController@download')->name('media-download');
+            $router->delete('media/delete', 'PNS\Admin\Extensions\MediaManager\MediaController@delete')->name('media-delete');
+            $router->put('media/move', 'PNS\Admin\Extensions\MediaManager\MediaController@move')->name('media-move');
+            $router->post('media/upload', 'PNS\Admin\Extensions\MediaManager\MediaController@upload')->name('media-upload');
+            $router->post('media/folder', 'PNS\Admin\Extensions\MediaManager\MediaController@newFolder')->name('media-new-folder');
         });
     }
 
