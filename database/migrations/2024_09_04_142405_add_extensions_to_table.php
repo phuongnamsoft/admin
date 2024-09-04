@@ -15,30 +15,33 @@ return new class extends Migration
         $table = AdminHelper::getExtensionsTable();
         Schema::table($table, function (Blueprint $table) {
             $table->tinyInteger('install_status')->nullable()->default(0)->after('enabled');
-            $table->text('install_logs')->nullable()->after('installed');
+            $table->text('install_logs')->nullable()->after('install_status');
         });
 
         $model = AdminHelper::getExtensionsModelClass();
-        $model->insert(
+        $model::insert([
             [
                 'name' => 'Helpers',
                 'slug' => 'helpers',
                 'install_status' => 0,
+                'enabled' => 1,
                 'is_default' => 1,
             ],
             [
                 'name' => 'Log Viewer',
                 'slug' => 'log-viewer',
                 'install_status' => 0,
+                'enabled' => 1,
                 'is_default' => 1,
             ],
             [
                 'name' => 'Media Manager',
                 'slug' => 'media-manager',
                 'install_status' => 0,
+                'enabled' => 1,
                 'is_default' => 1,
             ]
-        );
+        ]);
     }
 
     /**
@@ -52,6 +55,6 @@ return new class extends Migration
         });
 
         $model = AdminHelper::getExtensionsModelClass();
-        $model->whereIn('slug', ['helpers', 'log-viewer', 'media-manager'])->delete();
+        $model::whereIn('slug', ['helpers', 'log-viewer', 'media-manager'])->delete();
     }
 };
