@@ -370,6 +370,7 @@ abstract class Extension
             'title'     => $title,
             'icon'      => $icon,
             'uri'       => $uri,
+            'status' => 1,
         ]);
         if (!empty($children)) {
             $extension = static::getInstance();

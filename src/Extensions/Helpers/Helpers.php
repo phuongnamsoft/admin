@@ -49,6 +49,7 @@ class Helpers extends Extension
             'title'     => 'Helpers',
             'icon'      => 'fa-gears',
             'uri'       => '',
+            'status' => 1,
         ];
 
         $menuIds = [];
@@ -61,21 +62,25 @@ class Helpers extends Extension
                 'title'     => 'Scaffold',
                 'icon'      => 'fa-keyboard-o',
                 'uri'       => 'helpers/scaffold',
+                'status' => 1,
             ],
             [
                 'title'     => 'Database terminal',
                 'icon'      => 'fa-database',
                 'uri'       => 'helpers/terminal/database',
+                'status' => 1,
             ],
             [
                 'title'     => 'Laravel artisan',
                 'icon'      => 'fa-terminal',
                 'uri'       => 'helpers/terminal/artisan',
+                'status' => 1,
             ],
             [
                 'title'     => 'Routes',
                 'icon'      => 'fa-list-alt',
                 'uri'       => 'helpers/routes',
+                'status' => 1,
             ],
         ];
 
