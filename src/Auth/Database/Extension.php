@@ -77,8 +77,8 @@ class Extension extends Model
         } catch (\Throwable $th) {
             $this->install_logs = $th->getMessage();
             $this->install_status = self::INSTALL_STATUS_INSTALL_FAILED;
-            //throw $th;
-
+            $this->save();
+            
             return false;
         }
     }

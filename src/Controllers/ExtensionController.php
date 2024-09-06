@@ -127,17 +127,17 @@ class ExtensionController extends AdminController
 
         if ($extension->install_status == Extension::INSTALL_STATUS_INSTALLED) {
             admin_error("Extension [{$extension->name}] already installed");
-            return back()->with('error', 'Extension already installed');
+            return back();
         }
 
         if (!$extension->canInstall()) {
             admin_error("Extension [{$extension->name}] can not be installed");
-            return back()->with('error', 'Extension can not be installed');
+            return back();
         }
 
         if (!$extension->install()) {
             admin_error("Extension [{$extension->name}] install failed");
-            return back()->with('error', 'Extension install failed');
+            return back();
         }
 
         admin_success("Extension [{$extension->name}] installed successfully");
