@@ -52,11 +52,11 @@ class MigrationCreator extends BaseMigrationCreator
      *
      * @return mixed
      */
-    protected function populateStub($name, $stub, $table)
+    protected function populateStub($stub, $table)
     {
         return str_replace(
-            ['DummyClass', 'DummyTable', 'DummyStructure'],
-            [$this->getClassName($name), $table, $this->bluePrint],
+            ['DummyTable', 'DummyStructure'],
+            [$table, $this->bluePrint],
             $stub
         );
     }
