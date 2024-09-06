@@ -64,7 +64,7 @@ class Extension extends Model
         return $this->install_status != self::INSTALL_STATUS_INSTALLED;
     }
 
-    public function install() {
+    public function install() : ?bool {
         try {
             $extension = Admin::$extensions[$this->slug];
             $extension::import();

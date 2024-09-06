@@ -2,6 +2,7 @@
 
 namespace PNS\Admin\Controllers;
 
+use PNS\Admin\Auth\Database\Extension;
 use PNS\Admin\Form;
 use PNS\Admin\Grid;
 use PNS\Admin\Show;
@@ -23,7 +24,7 @@ class ExtensionController extends AdminController
      */
     protected function grid()
     {
-        $extensionModel = config('admin.database.extensions_model');
+        $extensionModel = (string) config('admin.database.extensions_model');
 
         $grid = new Grid(new $extensionModel());
 
@@ -31,7 +32,18 @@ class ExtensionController extends AdminController
         $grid->column('slug', trans('admin.slug'));
         $grid->column('name', trans('admin.name'));
 
-        $grid->column('permissions', trans('admin.permission'))->pluck('name')->label();
+        $grid->column('enabled', 'Enabled')->display(function ($enabled, $col) {
+            if ($this->install_status === Extension::INSTALL_STATUS_INSTALLED) {
+                return $col->switch(
+                    [
+                        'on'  => ['value' => 1, 'text' => 'ON', 'color' => 'success'],
+                        'off' => ['value' => 0, 'text' => 'OFF', 'color' => 'danger'],
+                    ]
+                );
+            }
+
+            return '<span class="label label-warning">Not installed</span>';
+        });
 
         $grid->column('created_at', trans('admin.created_at'));
         $grid->column('updated_at', trans('admin.updated_at'));
@@ -39,6 +51,10 @@ class ExtensionController extends AdminController
         $grid->actions(function (Grid\Displayers\Actions $actions) {
             if ($actions->row->slug == 'administrator') {
                 $actions->disableDelete();
+            }
+
+            if ($actions->row->canInstall()) {
+                $actions->prepend('<a href="'.route('admin.auth.extensions.install', ['id' => $actions->row->id]).'"><i class="fa fa-download"></i></a>');
             }
         });
 
@@ -83,7 +99,6 @@ class ExtensionController extends AdminController
      */
     public function form()
     {
-        $permissionModel = config('admin.database.permissions_model');
         $extensionModel = config('admin.database.extensions_model');
 
         $form = new Form(new $extensionModel());
@@ -92,11 +107,35 @@ class ExtensionController extends AdminController
 
         $form->text('slug', trans('admin.slug'))->rules('required');
         $form->text('name', trans('admin.name'))->rules('required');
-        
+
+        $form->json('config', 'Config');
+
+        $form->switch('enabled', 'Enabled');
 
         $form->display('created_at', trans('admin.created_at'));
         $form->display('updated_at', trans('admin.updated_at'));
 
         return $form;
+    }
+
+    public function install($id)
+    {
+        $extensionModel = config('admin.database.extensions_model');
+
+        /** @var Extension $extension */
+        $extension = $extensionModel::findOrFail($id);
+
+        if ($extension->install_status == Extension::INSTALL_STATUS_INSTALLED) {
+            admin_error("Extension [{$extension->name}] already installed");
+            return back()->with('error', 'Extension already installed');
+        }
+
+        if (!$extension->canInstall()) {
+            admin_error("Extension [{$extension->name}] can not be installed");
+            return back()->with('error', 'Extension can not be installed');
+        }
+
+        admin_success("Extension [{$extension->name}] installed successfully");
+        return back();
     }
 }
