@@ -197,7 +197,7 @@ abstract class Extension
      */
     public function enabled()
     {
-        return static::config('enable') !== false;
+        return static::getModel()?->enabled != false;
     }
 
     /**
@@ -441,5 +441,16 @@ abstract class Extension
         );
 
         Route::group($attributes, $callback);
+    }
+
+    /**
+     * Get the extension model.
+     *
+     * @return Model
+     */
+
+    public static function getModel() {
+        $extensionModel = AdminHelper::getExtensionsModelClass();
+        return $extensionModel::where('slug', self::SLUG)->first();
     }
 }

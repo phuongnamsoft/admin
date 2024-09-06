@@ -39,7 +39,7 @@ class Helpers extends Extension
         });
     }
 
-    public static function import()
+    public static function install()
     {
         $lastOrder = Menu::max('order') ?: 0;
 
@@ -88,5 +88,7 @@ class Helpers extends Extension
         }
 
         parent::createPermission('Admin helpers', 'ext.helpers', 'helpers/*');
+
+        
     }
 }

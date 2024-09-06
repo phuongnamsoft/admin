@@ -14,8 +14,6 @@ use League\Flysystem\Adapter\Local;
  */
 class MediaManager extends Extension {
 
-    use BootExtension;
-
     public $views = __DIR__ . '/resources/views';
     protected $path = '/';
 
@@ -48,6 +46,40 @@ class MediaManager extends Extension {
         $this->path = $path;
 
         $this->initStorage();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public static function boot() {
+        static::registerRoutes();
+        return TRUE;
+    }
+
+    /**
+     * Register routes for laravel-admin.
+     *
+     * @return void
+     */
+    protected static function registerRoutes() {
+        parent::routes(function ($router) {
+            /* @var \Illuminate\Routing\Router $router */
+            $router->get('media', 'PNS\Admin\Extensions\MediaManager\MediaController@index')->name('media-index');
+            $router->get('media/download', 'PNS\Admin\Extensions\MediaManager\MediaController@download')->name('media-download');
+            $router->delete('media/delete', 'PNS\Admin\Extensions\MediaManager\MediaController@delete')->name('media-delete');
+            $router->put('media/move', 'PNS\Admin\Extensions\MediaManager\MediaController@move')->name('media-move');
+            $router->post('media/upload', 'PNS\Admin\Extensions\MediaManager\MediaController@upload')->name('media-upload');
+            $router->post('media/folder', 'PNS\Admin\Extensions\MediaManager\MediaController@newFolder')->name('media-new-folder');
+        });
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public static function import() {
+        parent::createMenu('Media manager', 'media', 'fa-file');
+
+        parent::createPermission('Media manager', 'ext.media-manager', 'media*');
     }
 
     private function initStorage() {
