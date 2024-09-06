@@ -118,9 +118,10 @@ class UserController extends AdminController
         });
 
         $form->tab('Auth Settings', function (Form $form) {
-            $form->switch('google2fa_enabled', 'Google 2FA Enabled')->default(0)->when(1, function (Form $form) {
+            $form->radio('google2fa_enabled', 'Google 2FA Enabled')->default(0)
+            ->options([0 => 'No', 1 => 'Yes'])
+            ->when(1, function (Form $form) {
                 $form->text('google2fa_secret', 'Google 2FA Secret')->default(null)->readonly();
-                $form->html('<a href="https://play.google.com/store/apps/details?id=com.google.android.apps.authenticator2" target="_blank">Download Google Authenticator</a>')->plain();
             });
         });
 
