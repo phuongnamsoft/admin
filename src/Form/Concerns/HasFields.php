@@ -65,6 +65,7 @@ use Illuminate\Support\Arr;
  * @method Field\PHPEditor      php($column, $label = '')
  * @method Field\TinyMCE        tinymce($column, $label = '')
  * @method Field\Summernote     summernote($column, $label = '')
+ * @method Field\QrCode         qrCode($column, $label = '')
 
  */
 trait HasFields
@@ -138,6 +139,7 @@ trait HasFields
         'python'            => Field\PythonEditor::class,
         'tinymce'           => Field\TinyMCE::class,
         'summernote'        => Field\Summernote::class,
+        'qrCode'            => Field\QrCode::class,
     ];
 
     /**
