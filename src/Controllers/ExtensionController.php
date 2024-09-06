@@ -135,6 +135,11 @@ class ExtensionController extends AdminController
             return back()->with('error', 'Extension can not be installed');
         }
 
+        if (!$extension->install()) {
+            admin_error("Extension [{$extension->name}] install failed");
+            return back()->with('error', 'Extension install failed');
+        }
+
         admin_success("Extension [{$extension->name}] installed successfully");
         return back();
     }
