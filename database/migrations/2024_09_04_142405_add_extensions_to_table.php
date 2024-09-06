@@ -24,23 +24,30 @@ return new class extends Migration
                 'name' => 'Helpers',
                 'slug' => 'helpers',
                 'install_status' => 0,
-                'enabled' => 1,
+                'enabled' => 0,
                 'is_default' => 1,
             ],
             [
                 'name' => 'Log Viewer',
                 'slug' => 'log-viewer',
                 'install_status' => 0,
-                'enabled' => 1,
+                'enabled' => 0,
                 'is_default' => 1,
             ],
             [
                 'name' => 'Media Manager',
                 'slug' => 'media-manager',
                 'install_status' => 0,
-                'enabled' => 1,
+                'enabled' => 0,
                 'is_default' => 1,
-            ]
+            ],
+            [
+                'name' => 'Scheduling',
+                'slug' => 'scheduling',
+                'install_status' => 0,
+                'enabled' => 0,
+                'is_default' => 1,
+            ],
         ]);
     }
 
@@ -55,6 +62,6 @@ return new class extends Migration
         });
 
         $model = AdminHelper::getExtensionsModelClass();
-        $model::whereIn('slug', ['helpers', 'log-viewer', 'media-manager'])->delete();
+        $model::whereIn('slug', ['helpers', 'log-viewer', 'media-manager', 'scheduling'])->delete();
     }
 };

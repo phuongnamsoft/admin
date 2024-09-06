@@ -76,7 +76,7 @@ class MediaManager extends Extension {
     /**
      * {@inheritdoc}
      */
-    public static function import() {
+    public static function install() {
         parent::createMenu('Media manager', 'media', 'fa-file');
 
         parent::createPermission('Media manager', 'ext.media-manager', 'media*');

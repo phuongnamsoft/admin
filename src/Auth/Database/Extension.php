@@ -67,7 +67,7 @@ class Extension extends Model
     public function install() : ?bool {
         try {
             $extension = Admin::$extensions[$this->slug];
-            $extension::import();
+            $extension::install();
 
             $this->enabled = 1;
             $this->install_status = self::INSTALL_STATUS_INSTALLED;
@@ -78,7 +78,7 @@ class Extension extends Model
             $this->install_logs = $th->getMessage();
             $this->install_status = self::INSTALL_STATUS_INSTALL_FAILED;
             $this->save();
-            
+
             return false;
         }
     }

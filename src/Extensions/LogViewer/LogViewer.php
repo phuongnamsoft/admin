@@ -382,7 +382,7 @@ TPL;
     /**
      * {@inheritdoc}
      */
-    public static function import()
+    public static function install()
     {
         parent::createMenu('Log viewer', 'logs', 'fa-database');
 

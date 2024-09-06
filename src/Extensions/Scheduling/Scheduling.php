@@ -166,7 +166,7 @@ class Scheduling extends Extension
     /**
      * {@inheritdoc}
      */
-    public static function import()
+    public static function install()
     {
         parent::createMenu('Scheduling', 'scheduling', 'fa-clock-o');
 

@@ -234,7 +234,7 @@ abstract class Extension
     /**
      * Import menu item and permission to laravel-admin.
      */
-    public static function import()
+    public static function install()
     {
         $extension = static::getInstance();
         DB::transaction(function () use ($extension) {
