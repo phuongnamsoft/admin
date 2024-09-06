@@ -324,7 +324,7 @@ class Admin
                 $router->resource('auth/menu', 'MenuController', ['except' => ['create']])->names('admin.auth.menu');
                 $router->resource('auth/logs', 'LogController', ['only' => ['index', 'destroy']])->names('admin.auth.logs');
                 $router->resource('auth/extensions', 'ExtensionController')->names('admin.auth.extensions');
-                $router->post('auth/extensions/{id}/install', 'ExtensionController@install')->name('admin.auth.extensions.install');
+                $router->match(['GET', 'POST'], 'auth/extensions/{id}/install', 'ExtensionController@install')->name('admin.auth.extensions.install');
 
                 $router->post('_handle_form_', 'HandleController@handleForm')->name('admin.handle-form');
                 $router->post('_handle_action_', 'HandleController@handleAction')->name('admin.handle-action');
