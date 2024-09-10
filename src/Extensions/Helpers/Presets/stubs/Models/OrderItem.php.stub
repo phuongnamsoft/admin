@@ -1,0 +1,70 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
+
+class OrderItem extends Model
+{
+    protected $table = 'order_items';
+
+    protected $fillable = [
+        'order_id',
+        'product_id',
+        'price',
+        'quantity',
+    ];
+
+    public function __construct(array $attributes = [])
+    {
+        parent::__construct($attributes);
+    }
+
+    /**
+     * @param  \Illuminate\Database\Eloquent\Builder  $query
+     * @param  mixed  $dateKey
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeFilterCreatedDate(Builder $query, $dateKey = null): Builder
+    {
+        if (empty($dateKey)) {
+            return $query;
+        }
+
+        if (!isset(Order::LIST_DATE_FILTER_OPTIONS[$dateKey])) {
+            return $query;
+        }
+
+        if ($dateKey === 'today') {
+            return $query
+                ->where('order_items.created_at', '>=', date('Y-m-d') . ' 00:00:00')
+                ->where('order_items.created_at', '<=', date('Y-m-d') . ' 23:59:59');
+        } else if ($dateKey === 'yesterday') {
+            return $query
+                ->where('order_items.created_at', '>=', date('Y-m-d', strtotime('-1 day')) . ' 00:00:00')
+                ->where('order_items.created_at', '<=', date('Y-m-d', strtotime('-1 day')) . ' 23:59:59');
+        } else if ($dateKey === 'this_month') {
+            return $query
+                ->where('order_items.created_at', '>=', date('Y-m') . '-01 00:00:00')
+                ->where('order_items.created_at', '<=', date('Y-m-t') . ' 23:59:59');
+        } else if ($dateKey === 'last_month') {
+            return $query
+                ->where('order_items.created_at', '>=', date('Y-m', strtotime('-1 month')) . '-01 00:00:00')
+                ->where('order_items.created_at', '<=', date('Y-m-t', strtotime('-1 month')) . ' 23:59:59');
+        }
+
+        return $query;
+    }
+
+    public function order(): BelongsTo
+    {
+        return $this->belongsTo(Order::class, 'order_id');
+    }
+
+    public function product(): BelongsTo
+    {
+        return $this->belongsTo(Product::class, 'product_id');
+    }
+}

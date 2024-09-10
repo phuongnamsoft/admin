@@ -1,0 +1,440 @@
+<?php
+
+namespace App\Models;
+
+use App\Helpers\ArrayHelper;
+use App\Helpers\CurrencyHelper;
+use App\Helpers\StringHelper;
+use App\Models\Traits\BelongsToAdminUserTrait;
+use App\Services\OrderService;
+use App\Services\QRService;
+use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
+use PNS\Admin\Auth\Database\Administrator;
+
+class Order extends Model
+{
+
+    const STATUS_OPEN = 'open';
+    const STATUS_BALANCE = 'balance';
+    const STATUS_CLOSED = 'closed';
+    const STATUS_COMPLETED = 'closed';
+    const STATUS_REFUNDED = 'refunded';
+    const STATUS_CANCELLED = 'cancelled';
+    const STATUS_REOPENED = 'reopened';
+
+    const LIST_STATUSES = [
+        self::STATUS_OPEN => 'Open',
+        self::STATUS_BALANCE => 'Balance',
+        self::STATUS_CLOSED => 'Closed',
+        self::STATUS_REFUNDED => 'Refund',
+        self::STATUS_CANCELLED => 'Cancelled',
+        self::STATUS_REOPENED => 'Re-opened',
+    ];
+
+    const LIST_CHANGEABLE_STATUSES = [
+        self::STATUS_OPEN => [
+            self::STATUS_CLOSED,
+            self::STATUS_BALANCE,
+            self::STATUS_CANCELLED
+        ],
+        self::STATUS_BALANCE => [
+            self::STATUS_CLOSED,
+            self::STATUS_OPEN,
+            self::STATUS_CANCELLED
+        ],
+        self::STATUS_CLOSED => [
+            self::STATUS_REFUNDED,
+            self::STATUS_REOPENED
+        ],
+        self::STATUS_REFUNDED => [],
+        self::STATUS_CANCELLED => [],
+        self::STATUS_REOPENED => [
+            self::STATUS_CLOSED,
+            self::STATUS_CANCELLED
+        ],
+    ];
+
+    const LIST_DATE_FILTER_OPTIONS = [
+        'today' => 'Today',
+        'yesterday' => 'Yesterday',
+        'this_month' => 'This Month',
+        'last_month' => 'Last Month',
+        'select_date' => 'Select Date'
+    ];
+
+    protected $fillable = [
+        'customer_id',
+        'subtotal',
+        'tax',
+        'discount_id',
+        'discount_amount',
+        'final_total',
+        'paid_amount',
+        'is_affected',
+        'status',
+        'notes',
+        'updated_by',
+        'created_by',
+        'bill_number',
+        'bill_number_text',
+        'tax_amount',
+        'tax_percent',
+        'tax_inclusive',
+        'voucher_code_id',
+        'voucher_discount_id',
+    ];
+
+    protected $appends = ['status_text', 'balance_amount', 'can_open_in_pos'];
+
+    protected $table = 'orders';
+
+    public function __construct(array $attributes = [])
+    {
+        parent::__construct($attributes);
+    }
+
+    /**
+     * @param  \Illuminate\Database\Eloquent\Builder  $query
+     * @param  mixed  $dateKey
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeFilterCreatedDate(Builder $query, $dateKey = null): Builder
+    {
+        if (empty($dateKey)) {
+            return $query;
+        }
+
+        if (!isset(self::LIST_DATE_FILTER_OPTIONS[$dateKey])) {
+            return $query;
+        }
+
+        if ($dateKey === 'today') {
+            return $query
+                ->where('orders.created_at', '>=', date('Y-m-d') . ' 00:00:00')
+                ->where('orders.created_at', '<=', date('Y-m-d') . ' 23:59:59');
+        } else if ($dateKey === 'yesterday') {
+            return $query
+                ->where('orders.created_at', '>=', date('Y-m-d', strtotime('-1 day')) . ' 00:00:00')
+                ->where('orders.created_at', '<=', date('Y-m-d', strtotime('-1 day')) . ' 23:59:59');
+        } else if ($dateKey === 'this_month') {
+            return $query
+                ->where('orders.created_at', '>=', date('Y-m') . '-01 00:00:00')
+                ->where('orders.created_at', '<=', date('Y-m-t') . ' 23:59:59');
+        } else if ($dateKey === 'last_month') {
+            return $query
+                ->where('orders.created_at', '>=', date('Y-m', strtotime('-1 month')) . '-01 00:00:00')
+                ->where('orders.created_at', '<=', date('Y-m-t', strtotime('-1 month')) . ' 23:59:59');
+        }
+
+        return $query;
+    }
+
+    public function customer(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'customer_id');
+    }
+
+    public function cashier(): BelongsTo
+    {
+        return $this->belongsTo(Administrator::class, 'cashier_id');
+    }
+
+    public function items(): HasMany
+    {
+        return $this->hasMany(OrderItem::class);
+    }
+
+    public function payments(): HasMany
+    {
+        return $this->hasMany(OrderPayment::class);
+    }
+
+    public function getStatusTextAttribute(): ?string
+    {
+        return isset(self::LIST_STATUSES[$this->status]) ? self::LIST_STATUSES[$this->status] : null;
+    }
+
+
+    public function getBalanceAmountAttribute()
+    {
+        $balanceAmount = floatval(round($this->final_total, 1)) - floatval($this->paid_amount);
+        return $balanceAmount > 0 ? $balanceAmount : 0.00;
+    }
+
+    public function getFinalAmountTextAttribute()
+    {
+    }
+
+    public function generateBillNumberText()
+    {
+        $prefix = $this->store ? $this->store->bill_prefix : null;
+        $limit = $this->store ? $this->store->bill_number_limit : 4;
+
+        if ($this->store && !$this->bill_number) {
+            $this->store->bill_number++;
+            $this->bill_number = (int)$this->store->bill_number;
+            $this->save();
+            $this->store->save();
+        }
+
+        return StringHelper::formatBillNumber($this->bill_number, $limit, $prefix);
+    }
+
+    public function generateBillNumber()
+    {
+        if ($this->store && !$this->bill_number) {
+            $this->store->bill_number++;
+            $this->bill_number = (int)$this->store->bill_number;
+            $this->save();
+            $this->store->save();
+        }
+
+        if ($this->bill_number) {
+            $this->bill_number_text = $this->generateBillNumberText();
+            $this->save();
+        }
+
+        return $this->bill_number;
+    }
+
+    public function getSignatureImageUrlAttribute(): ?string
+    {
+        return $this->lastReceipt
+            && $this->lastReceipt->signature_image
+            ? Storage::disk('s3')->url($this->lastReceipt->signature_image)
+            : null;
+    }
+
+    public function getReceiptFileUrlAttribute(): ?string
+    {
+        return $this->lastReceipt
+            && $this->lastReceipt->receipt_file
+            ? Storage::disk('s3')->url($this->lastReceipt->receipt_file)
+            : null;
+    }
+
+    function getTaxValue(): ?float
+    {
+        return $this->store && $this->store->company
+            && $this->store->company->tax_value
+            ? (float) $this->store->company->tax_value
+            : 0.08;
+    }
+
+    public function calcOrder($save = false, $force = false)
+    {
+        if (!$this->can(self::CAN_CALCULATE) && !$force) {
+            return $this;
+        }
+
+        $metadata = new \stdClass;
+        $metadata->total_excluded_tax = 0.00;
+        $metadata->paid_excluded_tax = 0.00;
+        $metadata->due_excluded_tax = 0.00;
+
+        $metadata->discount_items = 0;
+
+        $metadata->total_included_tax = 0.00;
+        $metadata->paid_included_tax = 0.00;
+        $metadata->due_included_tax = 0.00;
+
+        $this->subtotal = 0.00;
+
+        $this->discount_amount = 0.00;
+
+        $this->tax_amount = 0.00;
+
+        $this->final_total = 0.00;
+        $this->paid_amount = 0.00;
+
+        foreach ($this->items as $item) {
+            $itemQuantity = $item->quantity - $item->redeem_quantity;
+
+            $itemSubTotal = ($itemQuantity * $item->price) - $item->discount_amount;
+
+            $item->discount_amount > 0
+                ? $metadata->discount_items++
+                : null;
+
+            $this->discount_amount += $item->discount_amount;
+
+            $this->subtotal += $itemSubTotal;
+        }
+
+        foreach ($this->payments as $item) {
+            $this->paid_amount += $item->amount;
+        }
+
+        $taxValue = $this->store && $this->store->company
+            && $this->store->company->tax_value
+            ? (float) $this->store->company->tax_value
+            : 0.08;
+
+        $isTaxInclusive = (bool) $this->tax_inclusive;
+
+        if ($isTaxInclusive) {
+            $this->tax_amount = ($this->subtotal * (1 + $taxValue)) - $this->subtotal;
+            $this->subtotal = $this->subtotal - $this->tax_amount;
+
+            $metadata->total_excluded_tax = $this->subtotal;
+            $metadata->paid_excluded_tax = $this->paid_amount - $this->tax_amount > 0
+                ? $this->paid_amount - $this->tax_amount
+                : 0;
+            $metadata->due_excluded_tax = $metadata->total_excluded_tax - $metadata->paid_excluded_tax  > 0
+                ? $metadata->total_excluded_tax - $metadata->paid_excluded_tax
+                : 0;
+
+            $this->final_total = $this->subtotal + $this->tax_amount;
+
+            $metadata->total_included_tax = $this->final_total;
+            $metadata->paid_included_tax = $this->paid_amount;
+            $metadata->due_included_tax = $metadata->total_included_tax - $metadata->paid_included_tax  > 0
+                ? $metadata->total_included_tax - $metadata->paid_included_tax
+                : 0;
+        } else {
+            $this->tax_amount = $this->subtotal * $taxValue;
+            $metadata->total_excluded_tax = $this->subtotal;
+            $metadata->paid_excluded_tax = $this->paid_amount - $this->tax_amount > 0
+                ? $this->paid_amount - $this->tax_amount
+                : 0;
+            $metadata->due_excluded_tax = $metadata->total_excluded_tax - $metadata->paid_excluded_tax  > 0
+                ? $metadata->total_excluded_tax - $metadata->paid_excluded_tax
+                : 0;
+
+            $this->final_total = $this->subtotal + $this->tax_amount;
+
+            $metadata->total_included_tax = $this->final_total;
+            $metadata->paid_included_tax = $this->paid_amount;
+            $metadata->due_included_tax = $metadata->total_included_tax - $metadata->paid_included_tax  > 0
+                ? $metadata->total_included_tax - $metadata->paid_included_tax
+                : 0;
+        }
+
+        $this->paid_amount = CurrencyHelper::getRounded($this->paid_amount);
+        $this->subtotal = CurrencyHelper::getRounded($this->subtotal);
+        $this->tax_amount = CurrencyHelper::getRounded($this->tax_amount);
+        $this->final_total = CurrencyHelper::getRounded($this->final_total);
+
+        $this->metadata = $metadata;
+
+        if ($save) {
+            $this->save();
+        }
+
+        return $this;
+    }
+
+    public function getValue($key, $default = null)
+    {
+        return isset($this->{$key})
+            ? $this->{$key} : (isset($this->metadata->{$key})
+                ? $this->metadata->{$key}
+                : $default
+            );
+    }
+
+    public function getCurrencyText($key, $decimal = 2)
+    {
+        $value = (float) $this->getValue($key);
+        return CurrencyHelper::getFormatted($value);
+    }
+
+    public function updateStatus($newStatus)
+    {
+        if (!$newStatus || !isset(self::LIST_STATUSES[$newStatus])) {
+            return false;
+        }
+
+        if (!in_array($newStatus, self::LIST_CHANGEABLE_STATUSES[$this->status])) {
+            return false;
+        }
+
+        if ($newStatus === self::STATUS_REOPENED) {
+            $this->reopenOrder();
+        } else {
+
+            $this->status = $newStatus;
+            $this->save();
+
+            if ($newStatus === self::STATUS_CLOSED) {
+            }
+        }
+
+        return true;
+    }
+
+    public function can($type): ?bool
+    {
+        return true;
+    }
+
+    public function getAllStaffIds(): ?array
+    {
+        $staffIds = [$this->cashier_id];
+
+        foreach ($this->items as $orderItem) {
+            $staffIds = array_merge($staffIds, $orderItem->stylist_ids);
+        }
+
+        return array_unique(array_filter($staffIds));
+    }
+
+    public function addItem($item, $quantity = 1, $staffIds = []): ?OrderItem
+    {
+
+        if ($item->item_type === OrderItem::OBJECT_TYPE_SERVICE) {
+            $orderItem = new OrderItem;
+
+            $orderItem->fill([
+                'order_id' => $this->id,
+                'object_id' => $item->id,
+                'object_type' => get_class($item),
+                'item_type' => $item->item_type,
+                'price' => $item->getCurrentStorePrice($store->id),
+                'quantity' => 1,
+                'stylist_ids' => $staffIds
+            ]);
+            $orderItem->save();
+        } else {
+            $orderItem = OrderItem::firstOrNew([
+                'order_id' => $this->id,
+                'object_id' => $item->id,
+                'object_type' => get_class($item),
+                'item_type' => $item->item_type,
+            ]);
+
+            $orderItem->fill([
+                'order_id' => $this->id,
+                'object_id' => $item->id,
+                'object_type' => get_class($item),
+                'item_type' => $item->item_type,
+                'price' => $item->getCurrentStorePrice($store->id),
+                'stylist_ids' => $staffIds
+            ]);
+
+            $orderItem->save();
+            $orderItem->increment('quantity', (int) $quantity);
+        }
+
+        $this->calcOrder(true);
+        return $orderItem;
+    }
+
+    public function addPayment($amount, $paymentMethod = null)
+    {
+        $payment = new OrderPayment;
+
+        if (empty($paymentMethod)) {
+            $paymentMethod = OrderPayment::PAYMENT_METHOD_CASH;
+        }
+
+        $payment->amount = $amount;
+        $payment->payment_method = $paymentMethod;
+        $this->payments()->save($payment);
+    }
+}

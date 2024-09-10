@@ -47,7 +47,7 @@ class RouteController extends Controller
                 $grid->disablePagination();
                 $grid->disableRowSelector();
                 $grid->disableActions();
-                $grid->disableCreation();
+                $grid->disableCreateButton();
                 $grid->disableExport();
 
                 $grid->filter(function ($filter) {

@@ -1,0 +1,466 @@
+<?php
+
+namespace App\Models;
+
+use App\Helpers\ArrayHelper;
+use App\Helpers\CurrencyHelper;
+use App\Helpers\StringHelper;
+use App\Mail\Admin\RegisterCustomer;
+use App\Mail\Admin\ResetUserPassword;
+use App\Models\Traits\BelongsToCompanyTrait;
+use App\Services\CustomFunctions;
+use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Http;
+use Laravel\Socialite\Contracts\User as ContractsUser;
+use Laravel\Sanctum\HasApiTokens;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Log;
+
+class Customer extends Model
+{
+    use HasApiTokens, HasFactory, Notifiable;
+
+    const STATUS_NEW = 0;
+    const STATUS_ACTIVE = 1;
+    const STATUS_BANNED = 3;
+
+    const LIST_STATUSES = [
+        self::STATUS_NEW => 'New',
+        self::STATUS_ACTIVE => 'Actived',
+        self::STATUS_BANNED => 'Banned',
+    ];
+
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var array
+     */
+    protected $fillable = [
+        'name',
+        'email',
+        'password',
+    ];
+
+    /**
+     * The attributes that should be hidden for arrays.
+     *
+     * @var array
+     */
+    protected $hidden = [
+        'password',
+        'remember_token',
+    ];
+
+    /**
+     * The attributes that should be cast to native types.
+     *
+     * @var array
+     */
+    protected $casts = [
+        'email_verified_at' => 'datetime',
+    ];
+
+    protected $appends = [
+        'avatar_url',
+        'full_name',
+    ];
+
+    protected $table = 'customers';
+
+    public function __construct($a)
+    {
+    }
+
+    /**
+     * @param  \Illuminate\Database\Eloquent\Builder  $query
+     * @param  mixed  $type
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeSearch(Builder $query, $keywords): Builder
+    {
+        return $keywords ? $query->where('last_name', 'LIKE', "%$keywords%")->orWhere('first_name', 'LIKE', "%$keywords%") : $query;
+    }
+
+    /**
+     * @param  \Illuminate\Database\Eloquent\Builder  $query
+     * @param  mixed  $type
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeSearchFullname(Builder $query, $keywords): Builder
+    {
+        return $keywords ? $query->whereRaw("CONCAT(first_name, ' ', last_name) LIKE '%" . $keywords . "%'") : $query;
+    }
+
+    /**
+     * @param  \Illuminate\Database\Eloquent\Builder  $query
+     * @param  mixed  $type
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeSearchFull(Builder $query, $keywords): Builder
+    {
+        if (!$keywords) {
+            return $query;
+        }
+
+        return $query
+            ->whereRaw("CONCAT(first_name, ' ', last_name) LIKE '%" . $keywords . "%'")
+            ->orWhere('phone', 'LIKE', '%' . $keywords . '%')
+            ->orWhere('email', 'LIKE', '%' . $keywords . '%');
+    }
+
+    static public function attempt(array $credentials = [], $remember = false)
+    {
+        $credentials['status'] = 1;
+        return Auth::guard(self::getGuard())->attempt($credentials, $remember);
+    }
+
+    public function login($remember = true)
+    {
+        return Auth::guard(self::getGuard())->login($this);
+    }
+
+    static public function getAuth()
+    {
+        return Auth::guard(self::getGuard());
+    }
+
+    static public function getGuard()
+    {
+        return 'web';
+    }
+
+    static public function getAuthUser()
+    {
+        try {
+            return Auth::guard(self::getGuard())->user();
+        } catch (\Throwable $th) {
+            return null;
+        }
+    }
+
+    static public function checkAuth(): bool
+    {
+        try {
+
+            if (!self::getAuth()->check()) {
+                return false;
+            }
+
+            $user = self::getAuth()->user();
+
+            return $user && $user->status === 1;
+        } catch (\Throwable $th) {
+            return false;
+        }
+    }
+
+    static public function handleLoginWithProvider(ContractsUser $providerUser): self
+    {
+        $user = self::where('email', $providerUser->getEmail())->first();
+
+        if (!$user) {
+            $user = new self;
+            $user->email = $providerUser->getEmail();
+            $user->name = $providerUser->getName();
+            $user->email_verified_at = date('Y-m-d H:i:s');
+            $user->last_logged_at = date('Y-m-d H:i:s');
+            $user->status = self::STATUS_ACTIVE;
+            $user->password = Hash::make(StringHelper::createRandomNumberString(16));
+            $user->save();
+            if ($providerUser->getAvatar()) {
+                $user->updateAvatar($providerUser->getAvatar());
+            }
+        }
+
+        return $user;
+    }
+
+    public function getAvatarUrlAttribute($avatar)
+    {
+        return $avatar ? $avatar : 'https://www.gravatar.com/avatar/' . md5($this->email) . '/';
+    }
+
+    public function getMarkedPhoneAttribute()
+    {
+        $strlen = strlen($this->phone);
+        if ($strlen > 4) {
+            return str_pad(substr($this->phone, -4), $strlen, "*", STR_PAD_LEFT);
+        }
+        return '************';
+    }
+
+    public function getAdminUrlAttribute()
+    {
+        return route('admin.members.edit', ['id' => $this->id]);
+    }
+
+    public function getFullNameAttribute()
+    {
+        return $this->first_name . ' ' . $this->last_name;
+    }
+
+    public function getTextAttribute()
+    {
+        return $this->first_name . ' ' . $this->last_name;
+    }
+
+    public function getPhoneTextAttribute()
+    {
+        return '+' . $this->country_code . ' ' . $this->phone;
+    }
+
+    public function getGenderTextAttribute()
+    {
+        $listGenders = CustomFunctions::arrGender();
+        return isset($listGenders[$this->gender]) ? $listGenders[$this->gender] : null;
+    }
+
+    public function getMarketingSourceTextAttribute()
+    {
+        $marketingSources = CustomFunctions::arrMarketingSource();
+        return isset($marketingSources[$this->marketing_source]) ? $marketingSources[$this->marketing_source] : null;
+    }
+
+    public function getFullInfoAttribute()
+    {
+        $addon = $this->phone || $this->email ? ' (' . implode(' - ', array_filter([$this->phone, $this->email])) . ')' : '';
+        return $this->first_name . ' ' . $this->last_name . $addon;
+    }
+
+    public function updateAvatar($url)
+    {
+        $resp = Http::get($url);
+
+        if ($resp->status() === 200) {
+            $this->image = $url;
+            $this->save();
+            return true;
+        }
+
+        return false;
+    }
+
+    public function getRegisterMethodTextAttribute()
+    {
+        return $this->register_method && isset(self::LIST_REGISTER_METHODS[$this->register_method]) ? self::LIST_REGISTER_METHODS[$this->register_method] : self::REGISTER_METHOD_DEFAULT;
+    }
+
+    static public function getListKV()
+    {
+        return ArrayHelper::convertKeyValue(self::get()->toArray(), 'id', 'full_name');
+    }
+
+    static public function getListFullInfoKV()
+    {
+        return ArrayHelper::convertKeyValue(self::get()->toArray(), 'id', 'full_info');
+    }
+
+    public function getWalletAmount(): float
+    {
+        $result = 0.0;
+
+        return $result;
+    }
+
+    public function prepaidServiceItems(): HasMany
+    {
+        return $this->hasMany(UserPrepaidServiceItem::class);
+    }
+
+    public function prepaidProductItems(): HasMany
+    {
+        return $this->hasMany(UserPrepaidProductItem::class);
+    }
+
+    public function groupedPrepaidProductItems() {
+        return $this->prepaidProductItems()->groupBy('product_id')->selectRaw('user_prepaid_product_items.user_id, user_prepaid_product_items.product_id, user_prepaid_product_items.price, sum(quantity) as quantity, sum(redeemed_quantity) as redeemed_quantity')->with(['product'])->get();
+    }
+
+    public function voucherCodes(): HasMany
+    {
+        return $this->hasMany(VoucherCode::class);
+    }
+
+    public function availableVoucherCodes()
+    {
+        $voucherIds = Voucher::applicable()->where('company_id', $this->company_id)->select('id')->get()->pluck('id')->toArray();
+        return $this->voucherCodes()->whereIn('voucher_id', $voucherIds)->where('used', 0);
+    }
+
+    public function walletHistories(): HasMany
+    {
+        return $this->hasMany(UserWalletHistory::class);
+    }
+
+    public function appointments(): HasMany
+    {
+        return $this->hasMany(UserAppointment::class);
+    }
+
+    function countTodayAppointments($storeId, $statuses = [UserAppointment::STATUS_BOOKED, UserAppointment::STATUS_CONFIRMED]): int
+    {
+        return $this->appointments()
+            ->where('store_id', $storeId)
+            ->whereIn('status', $statuses)
+            ->where('start_datetime', '>=', date('Y-m-d') . ' 00:00:00')
+            ->where('start_datetime', '<=', date('Y-m-d') . ' 23:59:59')
+            ->count();
+    }
+
+    public function addCreditAmount($type, float $amount): ?bool
+    {
+        if ($amount === 0) {
+            return false;
+        }
+
+        if ($amount > 0) {
+            $this->increment('credit_amount', $amount);
+        } else {
+            $this->decrement('credit_amount', abs($amount));
+        }
+
+        UserWalletHistory::insert([
+            'user_id' => $this->id,
+            'type' => $type,
+            'amount' => $amount
+        ]);
+
+        return true;
+    }
+
+    public function orders(): HasMany
+    {
+        return $this->hasMany(Order::class, 'customer_id');
+    }
+
+    public function listApplicableVouchers()
+    {
+
+        $now = date('Y-m-d H:i:s');
+        return Voucher::where('start_date', '>=', $now)->where('end_date', '<=', $now);
+    }
+
+    public function saveAsCreatedByAdmin()
+    {
+        if (!$this->email) {
+            return false;
+        }
+
+        $this->register_token = md5(uniqid('register_token_') . time());
+        $this->save();
+
+        Mail::to($this->email)->send(new RegisterCustomer($this));
+        return true;
+    }
+
+    public function getRegisterUrlAttribute()
+    {
+        if (!$this->register_token) {
+            return null;
+        }
+
+        if (!$this->company) {
+            return null;
+        }
+
+        return route('member.auth.signup', [
+            'companyUrl' => $this->company->url,
+            'id' => $this->id,
+            'register_token' => $this->register_token
+        ]);
+    }
+
+    public function getIsValidEmailAttribute()
+    {
+        return !empty($this->email) && filter_var($this->email, FILTER_VALIDATE_EMAIL) !== false;
+    }
+
+    public function getIsValidPhoneAttribute()
+    {
+        return !empty($this->phone) && !empty($this->country_code);
+    }
+
+    public function getLatestOpenBillAmountAttribute(): ?float
+    {
+        $latestOpenOrder = $this->getLatestOpenOrder();
+        return !empty($latestOpenOrder) ? (float) $latestOpenOrder->final_total : 0.00;
+    }
+
+    function getLatestOpenOrder(): ?Order
+    {
+        return $this->orders()
+            ->whereIn('status', [
+                Order::STATUS_OPEN,
+                // Order::STATUS_BALANCE,
+                // Order::STATUS_REOPENED
+            ])
+            ->orderBy('id', 'desc')
+            ->first();
+    }
+
+    function getOutstandingBalanceAttribute(): ?float
+    {
+        $totalFinalAmount = (float) $this->orders()->whereIn('status', [Order::STATUS_BALANCE, Order::STATUS_OPEN])->sum('final_total');
+        $orderIds = $this->orders()->whereIn('status', [Order::STATUS_BALANCE, Order::STATUS_OPEN])->get()->pluck('id')->toArray();
+        $totalPaidAmount = !empty($orderIds) ? OrderPayment::whereIn('order_id', $orderIds)->sum('amount') : 0.00;
+        return $totalFinalAmount - $totalPaidAmount;
+    }
+
+    public function getOutstandingBalanceTextAttribute(): string
+    {
+        return CurrencyHelper::getFormatted($this->outstanding_balance);
+    }
+
+    public function triggerForgotPassword()
+    {
+        try {
+            PasswordReset::where('company_id', $this->company_id)->where('email', $this->email)->delete();
+            $token = random_int(100000, 999999);
+            $md = new PasswordReset;
+            $md->company_id = $this->company_id;
+            $md->email = $this->email;
+            $md->token = $token;
+            $md->created_at = Carbon::now();
+
+            $url = route('member.pwd.verifyCodeView', [
+                'reset_code' => $token,
+                'companyUrl' => $this->company->url
+            ]);
+
+            if ($md->save()) {
+                if ($this->is_valid_email) {
+                    Mail::to($this->email)->send(new ResetUserPassword($url, $token));
+                    return true;
+                } else if ($this->is_valid_phone) {
+                    //Send SMS using Twilio
+                    $account_sid = config('services.twilio.sid');
+                    $auth_token = config('services.twilio.token');
+                    $send_from = config('services.twilio.from');
+
+                    $twilio_number = $send_from; //"+13609972722";
+                    $client = new Client($account_sid, $auth_token);
+                    $client->messages->create(
+                        '+' . $this->country_code . $this->phone,
+                        array(
+                            'from' => $twilio_number,
+                            'body' => 'Here is the verification code : ' . $token
+                        )
+                    );
+                    return true;
+                }
+            }
+        } catch (\Throwable $th) {
+            Log::error('error when triggerForgotPassword: ' . $th->getMessage());
+            Log::error($th);
+        }
+
+        return false;
+    }
+}
