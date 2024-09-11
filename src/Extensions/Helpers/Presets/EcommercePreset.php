@@ -20,9 +20,11 @@ class EcommercePreset {
                 'create_products_table',
             ],
             'seeds' => [
-                'ProductCategorySeeder',
-                'ProductSeeder',
+                // 'ProductSeeder',
             ],
+            'routes' => [
+                "\$router->resource('products', 'ProductController')->names('admin.products');",
+            ]
         ],
         'customer' => [
             'required' => true,
@@ -36,8 +38,11 @@ class EcommercePreset {
                 'create_customers_table',
             ],
             'seeds' => [
-                'CustomerSeeder',
+                // 'CustomerSeeder',
             ],
+            'routes' => [
+                "\$router->resource('customers', 'CustomerController')->names('admin.customers');",
+            ]
         ],
         'order' => [
             'required' => true,
@@ -54,10 +59,19 @@ class EcommercePreset {
                 'create_order_items_table',
             ],
             'seeds' => [
-                'OrderSeeder',
-                'OrderItemSeeder',
+                // 'OrderSeeder',
             ],
+            'routes' => [
+                "\$router->resource('orders', 'OrderController')->names('admin.orders');",
+            ]
         ],
     ];
+
+    public static function install($presets)
+    {
+        foreach (static::STUBS as $key => $stub) {
+            
+        }
+    }
 
 }
