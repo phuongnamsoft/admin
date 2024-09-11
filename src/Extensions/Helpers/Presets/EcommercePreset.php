@@ -67,10 +67,30 @@ class EcommercePreset {
         ],
     ];
 
-    public static function install($presets)
+    protected function moveModelFiles($name)
+    {
+        $stub = static::STUBS[$name];
+        if (isset($stub['models'])) {
+            foreach ($stub['models'] as $model) {
+                copy(__DIR__ . "/stubs/Models/{$model}.php.stub", app_path("Models/{$model}.php"));
+            }
+        }
+    }
+
+    protected function moveControllerFiles($name)
+    {
+        $stub = static::STUBS[$name];
+        if (isset($stub['controllers'])) {
+            foreach ($stub['controllers'] as $controller) {
+                copy(__DIR__ . "/stubs/Controllers/{$controller}.php.stub", app_path("Admin/Controllers/{$controller}.php"));
+            }
+        }
+    }
+
+    public function install()
     {
         foreach (static::STUBS as $key => $stub) {
-            
+
         }
     }
 
