@@ -2,7 +2,18 @@
 
 namespace PNS\Admin\Extensions\Helpers\Presets;
 
-class EcommercePreset {
+class EcommercePreset extends BasePreset {
+
+    protected $selectedModules = [
+        'product' => true,
+        'customer' => true,
+        'order' => true,
+    ];
+
+    protected $options = [
+        'run_migrations' => true,
+        'run_seeds' => false,
+    ];
 
     const STUBS = [
         'product' => [
@@ -67,30 +78,28 @@ class EcommercePreset {
         ],
     ];
 
-    protected function moveModelFiles($name)
-    {
-        $stub = static::STUBS[$name];
-        if (isset($stub['models'])) {
-            foreach ($stub['models'] as $model) {
-                copy(__DIR__ . "/stubs/Models/{$model}.php.stub", app_path("Models/{$model}.php"));
-            }
-        }
-    }
 
-    protected function moveControllerFiles($name)
-    {
-        $stub = static::STUBS[$name];
-        if (isset($stub['controllers'])) {
-            foreach ($stub['controllers'] as $controller) {
-                copy(__DIR__ . "/stubs/Controllers/{$controller}.php.stub", app_path("Admin/Controllers/{$controller}.php"));
-            }
-        }
-    }
 
     public function install()
     {
         foreach (static::STUBS as $key => $stub) {
+            if ($this->options[$key]) {
+                $this->moveModelFiles($key);
+                $this->moveControllerFiles($key);
+                $this->moveMigrationFiles($key);
+                $this->moveSeedFiles($key);
+                // $this->moveRouteFiles($key);
 
+            }
+
+        }
+
+        if ($this->options['run_migrations']) {
+            $this->runMigrations();
+        }
+
+        if ($this->options['run_seeds']) {
+            $this->runSeeds();
         }
     }
 
