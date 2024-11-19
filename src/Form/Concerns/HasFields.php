@@ -66,7 +66,8 @@ use Illuminate\Support\Arr;
  * @method Field\TinyMCE        tinymce($column, $label = '')
  * @method Field\Summernote     summernote($column, $label = '')
  * @method Field\QrCode         qrCode($column, $label = '')
-
+ * @method Field\CKEditor5      ckeditor5($column, $label = '')
+ * @method Field\CKEditor4      ckeditor4($column, $label = '')
  */
 trait HasFields
 {
@@ -140,6 +141,8 @@ trait HasFields
         'tinymce'           => Field\TinyMCE::class,
         'summernote'        => Field\Summernote::class,
         'qrCode'            => Field\QrCode::class,
+        'ckeditor5'         => Field\CKEditor5::class,
+        'ckeditor4'         => Field\CKEditor4::class,
     ];
 
     /**
