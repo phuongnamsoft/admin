@@ -9,7 +9,7 @@ class TinyMCE extends Textarea
     protected $view = 'laravel-admin::form.tinymce';
 
     protected static $js = [
-        'vendor/laravel-admin/tinymce/js/tinymce/tinymce.min.js',
+        'vendor/laravel-admin/tinymce/tinymce.min.js',
     ];
 
     public function render()
