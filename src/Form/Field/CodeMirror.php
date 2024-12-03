@@ -20,7 +20,7 @@ class CodeMirror extends Field
     /**
      * {@inheritdoc}
      */
-    protected $view = 'laravel-admin::form.code-mirror';
+    protected $view = 'admin::form.code-mirror';
 
     /**
      * {@inheritdoc}

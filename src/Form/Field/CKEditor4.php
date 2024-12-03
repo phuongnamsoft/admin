@@ -6,7 +6,7 @@ use PNS\Admin\Form\Field\Textarea;
 
 class CKEditor4 extends Textarea
 {
-    protected $view = 'laravel-admin::form.ckeditor';
+    protected $view = 'admin::form.ckeditor';
 
     protected static $js = [
         'https://cdn.ckeditor.com/4.22.1/standard/ckeditor.js',

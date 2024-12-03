@@ -6,7 +6,7 @@ use PNS\Admin\Form\Field;
 
 class JsonEditor extends Field
 {
-    protected $view = 'laravel-admin::json-editor';
+    protected $view = 'admin::json-editor';
 
     protected static $css = [
         'vendor/laravel-admin/json-editor/jsoneditor-6.2.1/dist/jsoneditor.min.css',

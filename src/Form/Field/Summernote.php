@@ -6,7 +6,7 @@ use PNS\Admin\Form\Field\Textarea;
 
 class Summernote extends Textarea
 {
-    protected $view = 'laravel-admin::form.summernote';
+    protected $view = 'admin::form.summernote';
 
     protected static $css = [
         'vendor/laravel-admin/summernote/summernote.css',

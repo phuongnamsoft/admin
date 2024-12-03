@@ -6,7 +6,7 @@ use PNS\Admin\Form\Field\Textarea;
 
 class TinyMCE extends Textarea
 {
-    protected $view = 'laravel-admin::form.tinymce';
+    protected $view = 'admin::form.tinymce';
 
     protected static $js = [
         'vendor/laravel-admin/tinymce/tinymce.min.js',
