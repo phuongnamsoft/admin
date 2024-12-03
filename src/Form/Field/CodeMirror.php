@@ -6,7 +6,7 @@ use PNS\Admin\Form\Field;
 
 class CodeMirror extends Field
 {
-    const ASSETS_PATH = 'vendor/laravel-admin/code-mirror/codemirror-5.40.0/';
+    const ASSETS_PATH = 'vendor/laravel-admin/codemirror-5.40.0/';
     protected $options = [
         'mode'             => 'javascript',
         'lineNumbers'      => true,
