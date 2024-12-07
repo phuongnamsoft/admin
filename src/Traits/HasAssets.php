@@ -208,7 +208,7 @@ trait HasAssets
         return view('admin::partials.js', ['js' => array_unique(static::$headerJs)]);
     }
 
-    public static function usePluginAssets($plugin) :?bool {
+    public static function usePluginAsset($plugin) :?bool {
         if (!isset(static::$pluginJs[$plugin])) {
             return false;
         }
