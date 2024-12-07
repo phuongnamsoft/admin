@@ -89,6 +89,28 @@ trait HasAssets
         'vendor/laravel-admin/laravel-admin/laravel-admin.js',
     ];
 
+    public const PLUGIN_JQUERY_UI = 'jquery-ui';
+    public const PLUGIN_JQUERY_VALIDATION = 'jquery-validation';
+    public const PLUGIN_JQUERY_FORM = 'jquery-form';
+
+    public static $pluginJs = [
+        self::PLUGIN_JQUERY_UI => [
+            'vendor/laravel-admin/jquery-ui/jquery-ui.min.js'
+        ],
+        self::PLUGIN_JQUERY_VALIDATION => [
+            'vendor/laravel-admin/jquery-validation/jquery.validate.min.js'
+        ],
+        self::PLUGIN_JQUERY_FORM => [
+            'vendor/laravel-admin/jquery-form/jquery.form.min.js'
+        ],
+    ];
+
+    public static $pluginCss = [
+        self::PLUGIN_JQUERY_UI => [
+            'vendor/laravel-admin/jquery-ui/jquery-ui.min.css'
+        ],
+    ];
+
     /**
      * @var string
      */
@@ -184,6 +206,20 @@ trait HasAssets
         }
 
         return view('admin::partials.js', ['js' => array_unique(static::$headerJs)]);
+    }
+
+    public static function usePluginAssets($plugin) :?bool {
+        if (!isset(static::$pluginJs[$plugin])) {
+            return false;
+        }
+
+        $pluginJs = static::$pluginJs[$plugin];
+        static::$js = array_merge(static::$js, $pluginJs);
+
+        $pluginCss = static::$pluginCss[$plugin];
+        static::$css = array_merge(static::$css, $pluginCss);
+
+        return true;
     }
 
     /**
