@@ -109,6 +109,12 @@ trait HasAssets
         self::PLUGIN_JQUERY_UI => [
             'vendor/laravel-admin/jquery-ui/jquery-ui.min.css'
         ],
+        self::PLUGIN_JQUERY_VALIDATION => [
+
+        ],
+        self::PLUGIN_JQUERY_FORM => [
+
+        ],
     ];
 
     /**
@@ -213,11 +219,15 @@ trait HasAssets
             return false;
         }
 
-        $pluginJs = static::$pluginJs[$plugin];
-        static::$js = array_merge(static::$js, $pluginJs);
+        if (isset(static::$pluginJs[$plugin])) {
+            $pluginJs = static::$pluginJs[$plugin];
+            static::$js = array_merge(static::$js, $pluginJs);
+        }
 
-        $pluginCss = static::$pluginCss[$plugin];
-        static::$css = array_merge(static::$css, $pluginCss);
+        if (isset(static::$pluginCss[$plugin])) {
+            $pluginCss = static::$pluginCss[$plugin];
+            static::$css = array_merge(static::$css, $pluginCss);
+        }
 
         return true;
     }
