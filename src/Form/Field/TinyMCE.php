@@ -15,14 +15,16 @@ class TinyMCE extends Textarea
     public function render()
     {
         $this->script = <<<EOT
-        const currentInstance = tinymce.get('{$this->id}');
-        if (currentInstance) {
-            currentInstance.remove();
-        }
+(() => {
+    const currentInstance = tinymce.get('{$this->id}');
+    if (currentInstance) {
+        currentInstance.remove();
+    }
 
-        tinymce.init({
-            selector: 'textarea#{$this->id}'
-        });
+    tinymce.init({
+        selector: 'textarea#{$this->id}'
+    });
+})();
 EOT;
         return parent::render();
     }
