@@ -15,7 +15,10 @@ class TinyMCE extends Textarea
     public function render()
     {
         $this->script = <<<EOT
-        $("textarea#{$this->id}").tinymce().remove();
+        const currentInstance = tinymce.get('{$this->id}');
+        if (currentInstance) {
+            currentInstance.remove();
+        }
 
         tinymce.init({
             selector: 'textarea#{$this->id}'
