@@ -15,9 +15,11 @@ class TinyMCE extends Textarea
     public function render()
     {
         $this->script = <<<EOT
-tinymce.init({
-  selector: 'textarea#{$this->id}'
-});
+        $("textarea#{$this->id}").tinymce().remove();
+
+        tinymce.init({
+            selector: 'textarea#{$this->id}'
+        });
 EOT;
         return parent::render();
     }
