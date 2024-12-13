@@ -17,6 +17,7 @@ class Lightbox extends AbstractDisplayer
     protected function script()
     {
         Admin::js('/vendor/laravel-admin/lightbox/jquery.magnific-popup.min.js');
+        Admin::css('/vendor/laravel-admin/lightbox/magnific-popup.css');
         $options = json_encode($this->options);
 
         return <<<SCRIPT
