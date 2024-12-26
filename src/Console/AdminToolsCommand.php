@@ -49,10 +49,12 @@ LOGO;
 
         if ($cmd == 'seed-settings') {
             $this->seedSettings();
-        }
-
-        if ($cmd == 'seed-extensions') {
+        } elseif ($cmd == 'seed-extensions') {
             $this->seedExtensions();
+        } else {
+            $this->comment('Available commands:');
+            $this->comment('php artisan admin:tools seed-settings');
+            $this->comment('php artisan admin:tools seed-extensions');
         }
     }
 
