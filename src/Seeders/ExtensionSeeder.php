@@ -51,11 +51,11 @@ class ExtensionSeeder extends Seeder
 
         foreach ($extensions as $extension) {
             if ($model::where('slug', $extension['slug'])->exists()) {
+                $this->command->info("Extension {$extension['name']} already exists. Skipping...");
                 continue;
             }
 
             $model::create($extension);
-
             $this->command->info('Extension ' . $extension['name'] . ' created successfully');
         }
 
