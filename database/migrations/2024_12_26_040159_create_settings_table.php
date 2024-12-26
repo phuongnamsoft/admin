@@ -42,10 +42,7 @@ return new class extends Migration
      */
     public function down()
     {
-        $connection = config('admin.database.connection') ?: config('database.default');
-
-        $table = config('admin.extensions.config.table', 'admin_config');
-
-        Schema::connection($connection)->dropIfExists($table);
+        Schema::dropIfExists('settings');
+        Schema::dropIfExists('setting_groups');
     }
 };
