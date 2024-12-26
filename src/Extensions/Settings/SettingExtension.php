@@ -23,6 +23,9 @@ class SettingExtension extends Extension
         parent::routes(function ($router) {
             /* @var \Illuminate\Routing\Router $router */
             $router->resource('settings', 'PNS\Admin\Extensions\Settings\Controllers\SettingController');
+
+            $router->get('settings-ui', 'PNS\Admin\Extensions\Settings\Controllers\SettingUiController@index');
+            $router->post('settings-ui/save', 'PNS\Admin\Extensions\Settings\Controllers\SettingUiController@save');
         });
     }
 
@@ -55,8 +58,20 @@ class SettingExtension extends Extension
      */
     public static function import()
     {
-        parent::createMenu('Settings', 'settings', 'fa-toggle-on');
+        parent::createMenu('Settings', 'settings', 'fa-cogs');
 
-        parent::createPermission('Admin Settings', 'ext.settings', 'settings*');
+        parent::createMenu('Settings UI', 'settings-ui', 'fa-toggle-on');
+
+        parent::createPermission('Settings', 'ext.settings', 'settings*');
+        parent::createPermission('Settings UI', 'ext.settings-ui', 'settings-ui*');
+        parent::createPermission('Settings UI Save', 'ext.settings-ui-save', 'settings-ui/save*');
+    }
+
+    public static function install() {
+        return self::import();
+    }
+
+    public static function uninstall() {
+        
     }
 }

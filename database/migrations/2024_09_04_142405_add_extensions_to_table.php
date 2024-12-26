@@ -17,38 +17,6 @@ return new class extends Migration
             $table->tinyInteger('install_status')->nullable()->default(0)->after('enabled');
             $table->text('install_logs')->nullable()->after('install_status');
         });
-
-        $model = AdminHelper::getExtensionsModelClass();
-        $model::insert([
-            [
-                'name' => 'Helpers',
-                'slug' => 'helpers',
-                'install_status' => 0,
-                'enabled' => 0,
-                'is_default' => 1,
-            ],
-            [
-                'name' => 'Log Viewer',
-                'slug' => 'log-viewer',
-                'install_status' => 0,
-                'enabled' => 0,
-                'is_default' => 1,
-            ],
-            [
-                'name' => 'Media Manager',
-                'slug' => 'media-manager',
-                'install_status' => 0,
-                'enabled' => 0,
-                'is_default' => 1,
-            ],
-            [
-                'name' => 'Scheduling',
-                'slug' => 'scheduling',
-                'install_status' => 0,
-                'enabled' => 0,
-                'is_default' => 1,
-            ],
-        ]);
     }
 
     /**

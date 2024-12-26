@@ -327,3 +327,30 @@ if (!function_exists('admin_get_route')) {
         return config('admin.route.prefix') . '.' . $name;
     }
 }
+
+if (!function_exists('setting')) {
+    function setting(string $name, $default = null)
+    {
+        return config('settings.' . $name, $default);
+    }
+}
+
+if (!function_exists('settings')) {
+    function settings()
+    {
+        return config('settings');
+    }
+}
+
+if (!function_exists('setting_put')) {
+    function setting_put($name, $value)
+    {
+        if (is_array($name)) {
+            foreach ($name as $key => $value) {
+                config(['settings.' . $key => $value]);
+            }
+        } else {
+            config(['settings.' . $name => $value]);
+        }
+    }
+}

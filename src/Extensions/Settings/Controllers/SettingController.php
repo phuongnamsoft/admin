@@ -33,7 +33,9 @@ class SettingController extends Controller
     public function index()
     {
         $grid = new Grid(new Setting);
-        $grid->model()->orderBy('sort', 'asc')->orderBy('id', 'desc');
+        $grid->model()
+            ->orderBy('sort', 'asc')
+            ->orderBy('id', 'desc');
 
         if (request()->has('group_id')) {
             $grid->model()->where('group_id', (int) request()->get('group_id'));
