@@ -89,7 +89,7 @@ class SettingController extends Controller
             ->row(function (Row $row) use ($grid) {
 
                 $row->column(2, function (Column $column) {
-                    $column->append(view('admin.setting.menu'));
+                    $column->append(view('laravel-admin-settings::partials.menu'));
                 });
 
                 $row->column(10, function (Column $column) use ($grid) {
