@@ -21,8 +21,9 @@ class SettingExtension extends Extension
     protected static function registerRoutes()
     {
         parent::routes(function ($router) {
-            /* @var \Illuminate\Routing\Router $router */
+            /** @var \Illuminate\Routing\Router $router */
             $router->resource('settings', 'PNS\Admin\Extensions\Settings\Controllers\SettingController');
+            $router->post('settings/create-group', 'PNS\Admin\Extensions\Settings\Controllers\SettingController@quickCreateSettingGroup')->name('admin.settings.create-group');
 
             $router->get('settings-ui', 'PNS\Admin\Extensions\Settings\Controllers\SettingUiController@index');
             $router->post('settings-ui/save', 'PNS\Admin\Extensions\Settings\Controllers\SettingUiController@save');

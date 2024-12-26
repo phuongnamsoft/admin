@@ -28,7 +28,7 @@
                     <span aria-hidden="true">&times;</span></button>
                 <h4 class="modal-title">Setting Group</h4>
             </div>
-            <form method="POST" action="<?php echo route('admin.settings.quickCreateSettingGroup') ?>">
+            <form method="POST" action="<?php echo route('admin.settings.create-group') ?>">
                 @csrf
                 <div class="modal-body">
                     <div class="row">
