@@ -6,6 +6,7 @@ use Illuminate\Support\ServiceProvider;
 use PNS\Admin\Extensions\Helpers\HelpersServiceProvider;
 use PNS\Admin\Extensions\LogViewer\LogViewerServiceProvider;
 use PNS\Admin\Extensions\Scheduling\SchedulingServiceProvider;
+use PNS\Admin\Extensions\Settings\SettingServiceProvider;
 
 class ExtensionServiceProvider extends ServiceProvider {
 
@@ -19,5 +20,6 @@ class ExtensionServiceProvider extends ServiceProvider {
         $this->app->register(LogViewerServiceProvider::class);
         $this->app->register(HelpersServiceProvider::class);
         $this->app->register(SchedulingServiceProvider::class);
+        $this->app->register(SettingServiceProvider::class);
     }
 }
