@@ -17,6 +17,7 @@ class AdminServiceProvider extends ServiceProvider
      */
     protected $commands = [
         Console\AdminCommand::class,
+        Console\AdminToolsCommand::class,
         Console\MakeCommand::class,
         Console\ControllerCommand::class,
         Console\MenuCommand::class,
