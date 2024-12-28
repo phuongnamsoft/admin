@@ -343,7 +343,7 @@ if (!function_exists('settings')) {
 }
 
 if (!function_exists('setting_put')) {
-    function setting_put($name, $value)
+    function setting_put($name, $value = null)
     {
         if (is_array($name)) {
             foreach ($name as $key => $value) {
