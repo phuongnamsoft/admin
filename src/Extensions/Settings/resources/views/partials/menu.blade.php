@@ -42,7 +42,7 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-success btn-submit-ajax">Create</button>
+                    <button type="button" class="btn btn-success btn-submit-create-group">Create</button>
                 </div>
             </form>
         </div>
@@ -52,8 +52,10 @@
 </div>
 
 
-<script>
+<script >
     $(document).ready(function() {
+        $('.btn-submit-create-group').click(function() {
 
+        });
     });
 </script>
