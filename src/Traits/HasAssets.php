@@ -92,6 +92,10 @@ trait HasAssets
     public const PLUGIN_JQUERY_UI = 'jquery-ui';
     public const PLUGIN_JQUERY_VALIDATION = 'jquery-validation';
     public const PLUGIN_JQUERY_FORM = 'jquery-form';
+    public const PLUGIN_FLATICON = 'flaticon';
+    public const PLUGIN_IONICONS = 'ionicons';
+    public const PLUGIN_FONTAWESOME_V6_FREE = 'fontawesome-v6-free';
+    public const PLUGIN_FONTAWESOME_V6_PRO = 'fontawesome-v6-pro';
 
     public static $pluginJs = [
         self::PLUGIN_JQUERY_UI => [
@@ -102,6 +106,9 @@ trait HasAssets
         ],
         self::PLUGIN_JQUERY_FORM => [
             'vendor/laravel-admin/jquery-form/jquery.form.min.js'
+        ],
+        self::PLUGIN_IONICONS => [
+            'https://cdn.jsdelivr.net/npm/ionicons@7.4.0/dist/esm/ionicons.min.js'
         ],
     ];
 
@@ -114,6 +121,18 @@ trait HasAssets
         ],
         self::PLUGIN_JQUERY_FORM => [
 
+        ],
+        self::PLUGIN_FLATICON => [
+            'https://cdn-uicons.flaticon.com/uicons-regular-rounded/css/uicons-regular-rounded.css'
+        ],
+        self::PLUGIN_IONICONS => [
+            'https://cdn.jsdelivr.net/npm/ionicons@7.4.0/dist/collection/components/icon/icon.min.css'
+        ],
+        self::PLUGIN_FONTAWESOME_V6_FREE => [
+            'vendor/fontawesome-6.7.2-free/css/all.min.css'
+        ],
+        self::PLUGIN_FONTAWESOME_V6_PRO => [
+            'vendor/fontawesome-6.5.2-pro/css/all.min.css'
         ],
     ];
 
