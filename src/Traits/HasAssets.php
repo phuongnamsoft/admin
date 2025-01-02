@@ -234,18 +234,14 @@ trait HasAssets
     }
 
     public static function usePluginAsset($plugin) :?bool {
-        if (!isset(static::$pluginJs[$plugin])) {
-            return false;
-        }
-
         if (isset(static::$pluginJs[$plugin])) {
-            $pluginJs = static::$pluginJs[$plugin];
-            static::$js = array_merge(static::$js, $pluginJs);
+            $pluginJs = !empty(static::$pluginJs[$plugin]) ? static::$pluginJs[$plugin] : [];
+            static::$js = array_unique(array_merge(static::$js, $pluginJs));
         }
 
         if (isset(static::$pluginCss[$plugin])) {
-            $pluginCss = static::$pluginCss[$plugin];
-            static::$css = array_merge(static::$css, $pluginCss);
+            $pluginCss = !empty(static::$pluginCss[$plugin]) ? static::$pluginCss[$plugin] : [];
+            static::$css = array_unique(array_merge(static::$css, $pluginCss));
         }
 
         return true;
