@@ -411,4 +411,8 @@ return [
     'extensions' => [
 
     ],
+
+    'autoload_plugins' => [
+        PNS\Admin\Traits\HasAssets::PLUGIN_DATATABLE
+    ],
 ];
