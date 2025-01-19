@@ -96,6 +96,7 @@ trait HasAssets
     public const PLUGIN_IONICONS = 'ionicons';
     public const PLUGIN_FONTAWESOME_V6_FREE = 'fontawesome-v6-free';
     public const PLUGIN_FONTAWESOME_V6_PRO = 'fontawesome-v6-pro';
+    public const PLUGIN_DATATABLE = 'datatable';
 
     public static $pluginJs = [
         self::PLUGIN_JQUERY_UI => [
@@ -109,6 +110,9 @@ trait HasAssets
         ],
         self::PLUGIN_IONICONS => [
             'https://cdn.jsdelivr.net/npm/ionicons@7.4.0/dist/esm/ionicons.min.js'
+        ],
+        self::PLUGIN_DATATABLE => [
+            'https://cdn.datatables.net/2.2.1/js/dataTables.js'
         ],
     ];
 
@@ -133,6 +137,9 @@ trait HasAssets
         ],
         self::PLUGIN_FONTAWESOME_V6_PRO => [
             'vendor/fontawesome-6.5.2-pro/css/all.min.css'
+        ],
+        self::PLUGIN_DATATABLE => [
+            'https://cdn.datatables.net/2.2.1/css/dataTables.dataTables.css'
         ],
     ];
 
