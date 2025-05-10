@@ -309,4 +309,16 @@ trait InlineEditing
     {
         return $this->displayUsing(Displayers\SwitchGroup::class, [$columns, $states]);
     }
+
+    /**
+     * Grid inline switch.
+     *
+     * @param array $states
+     *
+     * @return $this
+     */
+    public function switchToggle(array $states = [])
+    {
+        return $this->displayUsing(Displayers\SwitchToggle::class, [$states]);
+    }
 }
