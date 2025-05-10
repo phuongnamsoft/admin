@@ -14,9 +14,7 @@ class CKEditor5 extends Textarea
 
     public function render()
     {
-        $config = (array) CKEditor::config('config');
-
-        $config = json_encode(array_merge($config, $this->options));
+        $config = json_encode($this->options);
 
         $this->script = <<<EOT
 CKEDITOR.replace('{$this->id}', $config);
