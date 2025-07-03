@@ -373,7 +373,7 @@ class Column
      */
     public function cast($cast)
     {
-        $this->cast = $cast;
+        $this->sortable($cast);
 
         return $this;
     }

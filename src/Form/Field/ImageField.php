@@ -3,9 +3,8 @@
 namespace PNS\Admin\Form\Field;
 
 use Illuminate\Support\Str;
-use Intervention\Image\Constraint;
-use Intervention\Image\Facades\Image as InterventionImage;
-use Intervention\Image\ImageManagerStatic;
+use Intervention\Image\ImageManager;
+use Intervention\Image\Drivers\Gd\Driver;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 trait ImageField
@@ -18,11 +17,31 @@ trait ImageField
     protected $interventionCalls = [];
 
     /**
+     * Image manager instance.
+     *
+     * @var ImageManager
+     */
+    protected $imageManager;
+
+    /**
      * Thumbnail settings.
      *
      * @var array
      */
     protected $thumbnails = [];
+
+    /**
+     * Get the image manager instance.
+     *
+     * @return ImageManager
+     */
+    protected function getImageManager()
+    {
+        if (!$this->imageManager) {
+            $this->imageManager = new ImageManager(new Driver());
+        }
+        return $this->imageManager;
+    }
 
     /**
      * Default directory for file to upload.
@@ -44,14 +63,16 @@ trait ImageField
     public function callInterventionMethods($target)
     {
         if (!empty($this->interventionCalls)) {
-            $image = ImageManagerStatic::make($target);
+            $image = $this->getImageManager()->read($target);
 
             foreach ($this->interventionCalls as $call) {
                 call_user_func_array(
                     [$image, $call['method']],
                     $call['arguments']
-                )->save($target);
+                );
             }
+
+            $image->save($target);
         }
 
         return $target;
@@ -73,7 +94,7 @@ trait ImageField
             return $this;
         }
 
-        if (!class_exists(ImageManagerStatic::class)) {
+        if (!class_exists(ImageManager::class)) {
             throw new \Exception('To use image handling and manipulation, please install [intervention/image] first.');
         }
 
@@ -104,7 +125,7 @@ trait ImageField
      *
      * @return $this
      */
-    public function thumbnail($name, int $width = null, int $height = null)
+    public function thumbnail($name, ?int $width = null, ?int $height = null)
     {
         if (func_num_args() == 1 && is_array($name)) {
             foreach ($name as $key => $size) {
@@ -131,10 +152,6 @@ trait ImageField
         }
 
         foreach ($this->thumbnails as $name => $_) {
-            /*  Refactoring actual remove lofic to another method destroyThumbnailFile()
-            to make deleting thumbnails work with multiple as well as
-            single image upload. */
-
             if (is_array($this->original)) {
                 if (empty($this->original)) {
                     continue;
@@ -189,11 +206,12 @@ trait ImageField
             $path = $path.'-'.$name.'.'.$ext;
 
             /** @var \Intervention\Image\Image $image */
-            $image = InterventionImage::make($file);
+            $image = $this->getImageManager()->read($file);
 
             $action = $size[2] ?? 'resize';
+            
             // Resize image with aspect ratio
-            $image->$action($size[0], $size[1], function (Constraint $constraint) {
+            $image->$action($size[0], $size[1], function ($constraint) {
                 $constraint->aspectRatio();
             })->resizeCanvas($size[0], $size[1], 'center', false, '#ffffff');
 
