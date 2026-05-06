@@ -40,8 +40,14 @@ class UsersTest extends TestCase
         // assign role to user
         $this->visit('admin/auth/users/2/edit')
             ->see('Edit')
-            ->submitForm('Submit', ['roles' => [1]])
-            ->seePageIs('admin/auth/users')
+            ->submitForm('Submit', [
+                'username'              => 'Test',
+                'name'                  => 'Name',
+                'roles'                 => [1],
+                'permissions'           => [],
+                'google2fa_enabled'     => 0,
+            ])
+            ->seePageIs('admin/auth/users/2/edit')
             ->seeInDatabase(config('admin.database.role_users_table'), ['user_id' => 2, 'role_id' => 1]);
 
         $this->visit('admin/auth/logout')
@@ -65,8 +71,14 @@ class UsersTest extends TestCase
     {
         $this->visit('admin/auth/users/'.$this->user->id.'/edit')
             ->see('Create')
-            ->submitForm('Submit', ['name' => 'test', 'roles' => [1]])
-            ->seePageIs('admin/auth/users')
+            ->submitForm('Submit', [
+                'username'              => $this->user->username,
+                'name'                  => 'test',
+                'roles'                 => [1],
+                'permissions'           => [],
+                'google2fa_enabled'     => 0,
+            ])
+            ->seePageIs('admin/auth/users/'.$this->user->id.'/edit')
             ->seeInDatabase(config('admin.database.users_table'), ['name' => 'test']);
     }
 
@@ -78,6 +90,7 @@ class UsersTest extends TestCase
             'password'              => $password,
             'password_confirmation' => $password,
             'roles'                 => [1],
+            'google2fa_enabled'     => 0,
         ];
 
         $this->visit('admin/auth/users/'.$this->user->id.'/edit')

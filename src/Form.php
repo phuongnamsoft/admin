@@ -1482,6 +1482,14 @@ class Form implements Renderable
     }
 
     /**
+     * Remove a key from the pending input bag (e.g. skip updating optional fields).
+     */
+    public function forgetInput(string|array $key): void
+    {
+        Arr::forget($this->inputs, $key);
+    }
+
+    /**
      * Add a new layout column.
      *
      * @param int      $width

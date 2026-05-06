@@ -41,6 +41,8 @@ class UserSettingTest extends TestCase
 
     public function testUpdateAvatar()
     {
+        $this->requiresImageDriver();
+
         File::cleanDirectory(public_path('uploads/images'));
 
         $this->visit('admin/auth/setting')
@@ -63,7 +65,7 @@ class UserSettingTest extends TestCase
         $this->visit('admin/auth/setting')
             ->submitForm('Submit', $data)
             ->seePageIs('admin/auth/setting')
-            ->see('The Password confirmation does not match.');
+            ->see('confirmation does not match');
     }
 
     public function testUpdatePassword()

@@ -73,7 +73,7 @@ class PermissionsTest extends TestCase
         $this->visit('admin/auth/users/1/edit')
             ->see('Edit')
             ->submitForm('Submit', ['permissions' => [1], 'roles' => [1]])
-            ->seePageIs('admin/auth/users')
+            ->seePageIs('admin/auth/users/1/edit')
             ->seeInDatabase(config('admin.database.user_permissions_table'), ['user_id' => 1, 'permission_id' => 1])
             ->seeInDatabase(config('admin.database.role_users_table'), ['user_id' => 1, 'role_id' => 1]);
     }
@@ -90,7 +90,7 @@ class PermissionsTest extends TestCase
         $this->visit('admin/auth/users/create')
             ->see('Create')
             ->submitForm('Submit', $user)
-            ->seePageIs('admin/auth/users')
+            ->seePageIs('admin/auth/users/2/edit')
             ->seeInDatabase(config('admin.database.users_table'), ['username' => 'Test']);
 
         $this->assertFalse(Administrator::find(2)->isAdministrator());
@@ -112,7 +112,7 @@ class PermissionsTest extends TestCase
         $this->visit('admin/auth/users/2/edit')
             ->see('Edit')
             ->submitForm('Submit', ['permissions' => [6]])
-            ->seePageIs('admin/auth/users')
+            ->seePageIs('admin/auth/users/2/edit')
             ->seeInDatabase(config('admin.database.user_permissions_table'), ['user_id' => 2, 'permission_id' => 6]);
 
         $this->assertTrue(Administrator::find(2)->can('can-update'));
@@ -121,7 +121,7 @@ class PermissionsTest extends TestCase
         $this->visit('admin/auth/users/2/edit')
             ->see('Edit')
             ->submitForm('Submit', ['permissions' => [7]])
-            ->seePageIs('admin/auth/users')
+            ->seePageIs('admin/auth/users/2/edit')
             ->seeInDatabase(config('admin.database.user_permissions_table'), ['user_id' => 2, 'permission_id' => 7]);
 
         $this->assertTrue(Administrator::find(2)->can('can-remove'));
@@ -129,7 +129,7 @@ class PermissionsTest extends TestCase
         $this->visit('admin/auth/users/2/edit')
             ->see('Edit')
             ->submitForm('Submit', ['permissions' => []])
-            ->seePageIs('admin/auth/users')
+            ->seePageIs('admin/auth/users/2/edit')
             ->missingFromDatabase(config('admin.database.user_permissions_table'), ['user_id' => 2, 'permission_id' => 6])
             ->missingFromDatabase(config('admin.database.user_permissions_table'), ['user_id' => 2, 'permission_id' => 7]);
 
@@ -150,7 +150,7 @@ class PermissionsTest extends TestCase
         $this->visit('admin/auth/users/create')
             ->see('Create')
             ->submitForm('Submit', $user)
-            ->seePageIs('admin/auth/users')
+            ->seePageIs('admin/auth/users/2/edit')
             ->seeInDatabase(config('admin.database.users_table'), ['username' => 'Test']);
 
         $this->assertFalse(Administrator::find(2)->isAdministrator());
@@ -169,7 +169,7 @@ class PermissionsTest extends TestCase
         $this->visit('admin/auth/users/2/edit')
             ->see('Edit')
             ->submitForm('Submit', ['roles' => [2]])
-            ->seePageIs('admin/auth/users')
+            ->seePageIs('admin/auth/users/2/edit')
             ->seeInDatabase(config('admin.database.role_users_table'), ['user_id' => 2, 'role_id' => 2]);
 
         $this->assertTrue(Administrator::find(2)->isRole('developer'));

@@ -11,6 +11,8 @@ class ImageUploadTest extends TestCase
     {
         parent::setUp();
 
+        $this->requiresImageDriver();
+
         $this->be(Administrator::first(), 'admin');
     }
 

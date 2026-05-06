@@ -81,11 +81,19 @@ class File extends Field
             $input[$this->column] = '';
         }
 
-        $rules = $attributes = [];
-
-        if (!$fieldRules = $this->getRules()) {
+        if (! $fieldRules = $this->getRules()) {
             return false;
         }
+
+        $formattedRules = $this->formatRules($fieldRules);
+        $value = Arr::get($input, $this->column);
+        $isEmpty = $value === null || $value === '';
+
+        if ($isEmpty && ! in_array('required', $formattedRules, true)) {
+            return false;
+        }
+
+        $rules = $attributes = [];
 
         $rules[$this->column] = $fieldRules;
         $attributes[$this->column] = $this->label;

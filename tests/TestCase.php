@@ -35,6 +35,8 @@ class TestCase extends BaseTestCase
 
         $app->make('Illuminate\Contracts\Console\Kernel')->bootstrap();
 
+        $app->register(\Illuminate\Database\Eloquent\LegacyFactoryServiceProvider::class);
+
         $app->register('PNS\Admin\AdminServiceProvider');
 
         return $app;
@@ -88,7 +90,7 @@ class TestCase extends BaseTestCase
 
         (new CreateTestTables())->down();
 
-        DB::select("delete from `migrations` where `migration` = '2016_01_04_173148_create_admin_tables'");
+        DB::table('migrations')->where('migration', '2016_01_04_173148_create_admin_tables')->delete();
 
         parent::tearDown();
     }
@@ -105,5 +107,15 @@ class TestCase extends BaseTestCase
         $fileSystem->requireOnce(__DIR__.'/migrations/2016_11_22_093148_create_test_tables.php');
 
         (new CreateTestTables())->up();
+    }
+
+    /**
+     * Skip when Intervention/image cannot use GD or Imagick (common in minimal CI or local PHP builds).
+     */
+    protected function requiresImageDriver(): void
+    {
+        if (! extension_loaded('gd') && ! extension_loaded('imagick')) {
+            $this->markTestSkipped('PHP gd or imagick extension is required for this test.');
+        }
     }
 }

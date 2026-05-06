@@ -33,12 +33,14 @@ class UserFormTest extends TestCase
             ->seeInElement('span[class=help-block]', 'Please input your postcode')
             ->seeElement('span[class=help-block] i[class*=fa-image]')
             ->seeInElement('span[class=help-block]', '上传头像')
-            ->seeElement("select[name='tags[]'][multiple=multiple]")
+            ->seeElement('select[multiple][name*="tags"]')
             ->seeInElement('a[html-field]', 'html...');
     }
 
     public function testSubmitForm()
     {
+        $this->requiresImageDriver();
+
         $data = [
             'username'              => 'John Doe',
             'email'                 => 'hello@world.com',
@@ -131,10 +133,10 @@ class UserFormTest extends TestCase
             ->seeElement("input[type=text][name='profile[color]'][value='{$user->profile->color}']")
             ->seeElement("input[type=text][name='profile[start_at]'][value='{$user->profile->start_at}']")
             ->seeElement("input[type=text][name='profile[end_at]'][value='{$user->profile->end_at}']")
-            ->seeElement("select[name='tags[]'][multiple=multiple]");
+            ->seeElement('select[multiple][name*="tags"]');
 
-        $this->assertCount(50, $this->crawler()->filter("select[name='tags[]'] option"));
-        $this->assertCount(5, $this->crawler()->filter("select[name='tags[]'] option[selected]"));
+        $this->assertCount(50, $this->crawler()->filter('select[multiple][name*="tags"] option'));
+        $this->assertCount(5, $this->crawler()->filter('select[multiple][name*="tags"] option[selected]'));
     }
 
     public function testUpdateForm()
@@ -171,14 +173,14 @@ class UserFormTest extends TestCase
         $this->type('xxaxx', 'email')
             ->press('Submit')
             ->seePageIs("admin/users/$id/edit")
-            ->see('The email must be a valid email address.');
+            ->see('valid email');
 
         $this->visit("admin/users/$id/edit")
             ->type('123', 'password')
             ->type('1234', 'password_confirmation')
             ->press('Submit')
             ->seePageIs("admin/users/$id/edit")
-            ->see('The Password confirmation does not match.');
+            ->see('confirmation does not match');
 
         $this->type('xx@xx.xx', 'email')
             ->type('123', 'password')

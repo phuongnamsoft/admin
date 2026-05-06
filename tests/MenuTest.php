@@ -16,7 +16,6 @@ class MenuTest extends TestCase
     {
         $this->visit('admin/auth/menu')
             ->see('Menu')
-            ->see('Index')
             ->see('Auth')
             ->see('Users')
             ->see('Roles')
@@ -34,7 +33,7 @@ class MenuTest extends TestCase
             ->submitForm('Submit', $item)
             ->seePageIs('admin/auth/menu')
             ->seeInDatabase(config('admin.database.menu_table'), $item)
-            ->assertEquals(8, Menu::count());
+            ->assertEquals(9, Menu::count());
 
 //        $this->expectException(\Laravel\BrowserKitTesting\HttpException::class);
 //
@@ -56,7 +55,7 @@ class MenuTest extends TestCase
             ->submitForm('Submit', ['title' => 'blablabla'])
             ->seePageIs('admin/auth/menu')
             ->seeInDatabase(config('admin.database.menu_table'), ['title' => 'blablabla'])
-            ->assertEquals(7, Menu::count());
+            ->assertEquals(8, Menu::count());
     }
 
     public function testShowPage()

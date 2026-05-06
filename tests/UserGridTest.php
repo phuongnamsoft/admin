@@ -129,12 +129,12 @@ class UserGridTest extends TestCase
             ->seeInElement('td', $user->mobile)
             ->seeElement("img[src='{$user->avatar}']")
             ->seeInElement('td', "{$user->profile->first_name} {$user->profile->last_name}")
-            ->seeInElement('td', $user->postcode)
-            ->seeInElement('td', $user->address)
+            ->seeInElement('td', $user->profile->postcode)
+            ->seeInElement('td', $user->profile->address)
             ->seeInElement('td', "{$user->profile->latitude} {$user->profile->longitude}")
-            ->seeInElement('td', $user->color)
-            ->seeInElement('td', $user->start_at)
-            ->seeInElement('td', $user->end_at);
+            ->seeInElement('td', $user->profile->color)
+            ->seeInElement('td', $user->profile->start_at)
+            ->seeInElement('td', $user->profile->end_at);
     }
 
     public function testLikeFilter()
@@ -170,12 +170,12 @@ class UserGridTest extends TestCase
             ->seeInElement('td', $user->mobile)
             ->seeElement("img[src='{$user->avatar}']")
             ->seeInElement('td', "{$user->profile->first_name} {$user->profile->last_name}")
-            ->seeInElement('td', $user->postcode)
-            ->seeInElement('td', $user->address)
+            ->seeInElement('td', $user->profile->postcode)
+            ->seeInElement('td', $user->profile->address)
             ->seeInElement('td', "{$user->profile->latitude} {$user->profile->longitude}")
-            ->seeInElement('td', $user->color)
-            ->seeInElement('td', $user->start_at)
-            ->seeInElement('td', $user->end_at);
+            ->seeInElement('td', $user->profile->color)
+            ->seeInElement('td', $user->profile->start_at)
+            ->seeInElement('td', $user->profile->end_at);
     }
 
     public function testDisplayCallback()

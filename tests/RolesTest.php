@@ -42,7 +42,7 @@ class RolesTest extends TestCase
         $this->visit('admin/auth/users/create')
             ->see('Create')
             ->submitForm('Submit', $user)
-            ->seePageIs('admin/auth/users')
+            ->seePageIs('admin/auth/users/2/edit')
             ->seeInDatabase(config('admin.database.users_table'), ['username' => 'Test']);
 
         $this->assertEquals(1, Role::count());
@@ -59,7 +59,7 @@ class RolesTest extends TestCase
         $this->visit('admin/auth/users/2/edit')
             ->see('Edit')
             ->submitForm('Submit', ['roles' => [2]])
-            ->seePageIs('admin/auth/users')
+            ->seePageIs('admin/auth/users/2/edit')
             ->seeInDatabase(config('admin.database.role_users_table'), ['user_id' => 2, 'role_id' => 2]);
 
         $this->assertTrue(Administrator::find(2)->isRole('developer'));

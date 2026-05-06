@@ -105,8 +105,12 @@ class UserController extends AdminController
 
             $form->text('name', trans('admin.name'))->rules('required');
             $form->image('avatar', trans('admin.avatar'));
-            $form->password('password', trans('admin.password'))->rules('required|confirmed');
-            $form->password('password_confirmation', trans('admin.password_confirmation'))->rules('required');
+            $form->password('password', trans('admin.password'))
+                ->creationRules(['required', 'confirmed'])
+                ->updateRules(['nullable', 'confirmed']);
+            $form->password('password_confirmation', trans('admin.password_confirmation'))
+                ->creationRules(['required'])
+                ->updateRules(['nullable']);
 
             $form->ignore(['password_confirmation']);
 
@@ -126,7 +130,13 @@ class UserController extends AdminController
         });
 
         $form->saving(function (Form $form) {
-            if ($form->password && $form->model()->password != $form->password) {
+            if (! $form->password || $form->password === '') {
+                $form->forgetInput(['password', 'password_confirmation']);
+
+                return;
+            }
+
+            if ($form->model()->password != $form->password) {
                 $form->password = Hash::make($form->password);
             }
         });
