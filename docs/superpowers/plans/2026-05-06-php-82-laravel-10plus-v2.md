@@ -19,6 +19,7 @@
 | PHPUnit | `phpunit.xml.dist` (PHPUnit 10+ schema if required) |
 | Tests base | `tests/TestCase.php` (imports / parent only if needed) |
 | Package source | `src/**/*.php` — only files that fail tests or emit PHP 8.2 / Laravel deprecations |
+| PHP 7→8 audit | `src/**/*.php`, `src/helpers.php` — removed/changed functions, stricter internal types (optional Rector/PHPStan one-off) |
 | Docs | `README.md`, `CHANGELOG.md`, optional `UPGRADING.md`, `docs/en/change-log.md` if it mirrors releases |
 | CI | Create `.github/workflows/tests.yml` (or extend existing) |
 
@@ -161,7 +162,62 @@ git commit -m "chore(test): align TestCase with Laravel 10/11 skeleton"
 
 ---
 
-### Task 4: Full PHPUnit run and fix package source
+### Task 4: PHP 7.x → 8.x language and built-in API compatibility
+
+**Goal:** Catch **functions, methods, and language constructs** that were valid on PHP 7.x but break or warn on PHP 8.0–8.2 *before* relying only on PHPUnit. PHPUnit and runtime still remain the source of truth; this task reduces surprise fatals and deprecation noise.
+
+**Files:**
+- Read/scan: `src/**/*.php`, `src/helpers.php`
+- Optional one-off dev tools (not required to stay in `composer.json` after the audit): Rector, PHPStan, or `php -l` over tree
+
+- [ ] **Step 1: Optional automated pass (pick one or both)**
+
+Run from the package root after Task 1’s `composer update` (PHP 8.2):
+
+- **Rector** (recommended for mechanical fixes): `composer require --dev rector/rector` then add a minimal `rector.php` targeting sets such as `LevelSetList::UP_TO_PHP_82` and `DeadCode` only if you want safe cleanup; start with `--dry-run` and review diffs. Remove the dev dependency afterward if you do not want it permanent.
+- **PHPStan** with `phpVersion: 80200` (or `81000` minimum) and `treatPhpDocTypesAsCertain: false` initially: surfaces passing `null` into non-nullable internal parameters, wrong arity, and undefined symbols.
+
+Expected: a list of concrete files/lines to fix manually if you do not apply Rector patches.
+
+- [ ] **Step 2: Grep for removed or risky built-ins (PHP 8.0+)**
+
+Search under `src/` (and tests if they contain such patterns) for constructs that **do not exist or behave differently** on PHP 8.x:
+
+| Pattern | PHP 8 note |
+|--------|------------|
+| `\beach\s*\(` | `each()` removed in 8.0 — replace with `foreach`. |
+| `create_function\s*\(` | Removed in 8.0 — use closures or named functions. |
+| `\bmoney_format\s*\(` | Removed in 8.0 — use `NumberFormatter`. |
+| `FILTER_SANITIZE_STRING` | Removed in 8.1 — replace with `htmlspecialchars`, `filter_var` with other flags, or dedicated sanitizer. |
+| `\bstrftime\s*\(|\bgmstrftime\s*\(` | Deprecated in 8.1 — prefer `DateTimeInterface::format()` / `IntlDateFormatter`. |
+| `\bget_magic_quotes_(gpc|runtime)\s*\(` | Removed in 8.0. |
+| `\bassert\s*\(` with string argument | String assert API removed in 8.0 — use boolean expressions only. |
+| `\butf8_encode\s*\(|\butf8_decode\s*\(` | Deprecated in 8.2 — use `mb_convert_encoding` or `mbstring` equivalents. |
+
+Use ripgrep or IDE search; fix any hits in package code (not in `vendor/`).
+
+- [ ] **Step 3: Stricter internal functions (null and types)**
+
+PHP 8+ is stricter about **internal** function arguments (e.g. `strlen(null)`, `strpos(null, …)` throws `TypeError`). Scan for:
+
+- String helpers (`strlen`, `strpos`, `str_replace`, `preg_*`, `json_encode`/`json_decode` misuse) receiving **possibly null** variables without guards or null coalescing.
+- `array_*` functions where the first argument was loosely `null` on PHP 7 but must be an array in 8+.
+
+Prefer explicit null checks, `?? ''`, `?? []`, or typed parameters/returns on your own functions so callsites are obvious.
+
+- [ ] **Step 4: Keywords, deprecations, and edge cases**
+
+- Ensure no **reserved words** are used as class/trait/interface names (`Match`, `mixed` as class name, etc.).
+- Replace deprecated **`${var}` string interpolation** (deprecated 8.2) with `{$var}` or concatenation.
+- Review **`@` suppression** and custom error handlers: failures that were silent may now surface under PHPUnit’s `failOnDeprecation` / `failOnNotice`.
+
+- [ ] **Step 5: Document findings (short)**
+
+If anything consumer-facing changed (e.g. public method signature narrowed, exception type changed), add a bullet under Task 7’s migration/changelog work or `UPGRADING.md`.
+
+---
+
+### Task 5: Full PHPUnit run and fix package source
 
 **Files:**
 - Modify: only failing files under `src/` (and `src/helpers.php` if referenced)
@@ -197,7 +253,7 @@ git commit -m "fix: PHP 8.2 and Laravel 10/11 compatibility for v2"
 
 ---
 
-### Task 5: CI — GitHub Actions matrix
+### Task 6: CI — GitHub Actions matrix
 
 **Files:**
 - Create: `.github/workflows/tests.yml`
@@ -272,7 +328,7 @@ git commit -m "ci: run PHPUnit on PHP 8.2+ with MySQL service"
 
 ---
 
-### Task 6: Documentation and changelog
+### Task 7: Documentation and changelog
 
 **Files:**
 - Modify: `README.md`, `CHANGELOG.md`, optionally `UPGRADING.md`, `docs/en/change-log.md`
@@ -320,7 +376,7 @@ git commit -m "docs: document v2 PHP/Laravel requirements and changelog"
 
 ---
 
-### Task 7: Release tag (human or CI)
+### Task 8: Release tag (human or CI)
 
 **Files:** none (git tag)
 
@@ -348,13 +404,14 @@ git push origin v2.0.0
 |-----------|------------------|
 | PHP ^8.2 | Task 1 |
 | Laravel ^10 \|\| ^11 | Task 1 |
-| Major semver v2 | Tasks 1, 6, 7 |
-| Minimal refactors | Task 4 wording |
+| Major semver v2 | Tasks 1, 7, 8 |
+| PHP 7→8 functions / language compatibility | Task 4 |
+| Minimal refactors | Task 5 wording |
 | BrowserKit path | Task 1 + 3 |
-| CI matrix | Task 5 |
-| README / changelog | Task 6 |
+| CI matrix | Task 6 |
+| README / changelog | Task 7 |
 
-Placeholder scan: none intentional; Task 5 notes a fallback if matrix `composer require` is brittle — implementer picks single-job CI first if needed, then expands.
+Placeholder scan: none intentional; Task 6 notes a fallback if matrix `composer require` is brittle — implementer picks single-job CI first if needed, then expands.
 
 ---
 
@@ -364,5 +421,7 @@ Plan complete and saved to `docs/superpowers/plans/2026-05-06-php-82-laravel-10p
 
 **1. Subagent-driven (recommended)** — one subagent per task, quick review between tasks.  
 **2. Inline execution** — run tasks in order in this session with commits after each task.
+
+Run **Task 4** after Composer/PHPUnit baseline tasks (1–3) and **before** Task 5’s full-suite burn-down so 7→8 API issues are found early.
 
 Say which you prefer (or start Task 1 inline without replying).
