@@ -19,6 +19,15 @@ class TestCase extends BaseTestCase
     {
         $app = require __DIR__.'/../vendor/laravel/laravel/bootstrap/app.php';
 
+        $laravelConfigDir = dirname(__DIR__).'/vendor/laravel/laravel/config';
+        $packageAdminConfig = dirname(__DIR__).'/config/admin.php';
+        if (is_readable($packageAdminConfig)) {
+            if (! is_dir($laravelConfigDir)) {
+                mkdir($laravelConfigDir, 0755, true);
+            }
+            copy($packageAdminConfig, $laravelConfigDir.'/admin.php');
+        }
+
         $app->booting(function () {
             $loader = \Illuminate\Foundation\AliasLoader::getInstance();
             $loader->alias('Admin', \PNS\Admin\Facades\Admin::class);
@@ -35,7 +44,9 @@ class TestCase extends BaseTestCase
     {
         parent::setUp();
 
+        $packageAdmin = require dirname(__DIR__).'/config/admin.php';
         $adminConfig = require __DIR__.'/config/admin.php';
+        $mergedAdmin = array_replace_recursive($packageAdmin, $adminConfig);
 
         $this->app['config']->set('database.default', env('DB_CONNECTION', 'mysql'));
         $this->app['config']->set('database.connections.mysql.host', env('MYSQL_HOST', 'localhost'));
@@ -44,13 +55,13 @@ class TestCase extends BaseTestCase
         $this->app['config']->set('database.connections.mysql.password', env('MYSQL_PASSWORD', ''));
         $this->app['config']->set('app.key', 'AckfSECXIvnK5r28GVIWUAxmbBSjTsmF');
         $this->app['config']->set('filesystems', require __DIR__.'/config/filesystems.php');
-        $this->app['config']->set('admin', $adminConfig);
+        $this->app['config']->set('admin', $mergedAdmin);
 
-        foreach (Arr::dot(Arr::get($adminConfig, 'auth'), 'auth.') as $key => $value) {
+        foreach (Arr::dot(Arr::get($mergedAdmin, 'auth'), 'auth.') as $key => $value) {
             $this->app['config']->set($key, $value);
         }
 
-        $this->artisan('vendor:publish', ['--provider' => 'PNS\Admin\AdminServiceProvider']);
+        $this->artisan('vendor:publish', ['--provider' => 'PNS\Admin\AdminServiceProvider', '--force' => true]);
 
         Schema::defaultStringLength(191);
 

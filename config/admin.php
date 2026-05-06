@@ -413,6 +413,6 @@ return [
     ],
 
     'autoload_plugins' => [
-        PNS\Admin\Traits\HasAssets::PLUGIN_DATATABLE
+        \PNS\Admin\Admin::PLUGIN_DATATABLE,
     ],
 ];
