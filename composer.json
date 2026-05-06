@@ -12,19 +12,20 @@
         }
     ],
     "require": {
-        "php": ">=7.3.0",
-        "symfony/dom-crawler": "~3.1|~4.0|~5.0|~6.0",
-        "laravel/framework": ">=8.0",
-        "doctrine/dbal": "3.*|4.*",
+        "php": "^8.2",
+        "symfony/dom-crawler": "^6.0|^7.0",
+        "laravel/framework": "^10.0|^11.0",
+        "doctrine/dbal": "^3.0|^4.0",
         "barryvdh/laravel-elfinder": "^0.5.3",
         "pragmarx/google2fa": "^8.0",
         "bacon/bacon-qr-code": "^3.0",
         "intervention/image": "^3.11"
     },
     "require-dev": {
-        "laravel/laravel": ">=8.0",
-        "laravel/browser-kit-testing": "^6.0",
-        "spatie/phpunit-watcher": "^1.22.0"
+        "laravel/laravel": "^10.0|^11.0",
+        "laravel/browser-kit-testing": "^7.0",
+        "phpunit/phpunit": "^10.5",
+        "spatie/phpunit-watcher": "^1.22"
     },
     "autoload": {
         "psr-4": {
@@ -47,7 +48,7 @@
         "test": "./vendor/bin/phpunit"
     },
     "suggest": {
-        "intervention/image": "Required to handling and manipulation upload images (~2.3).",
+        "intervention/image": "Required for image upload/manipulation (~3.x).",
         "spatie/eloquent-sortable": "Required to built orderable gird."
     },
     "extra": {
