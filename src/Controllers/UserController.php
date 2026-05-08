@@ -6,6 +6,7 @@ use PNS\Admin\Form;
 use PNS\Admin\Grid;
 use PNS\Admin\Show;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\Rule;
 
 class UserController extends AdminController
 {
@@ -96,12 +97,16 @@ class UserController extends AdminController
             /** @var \PNS\Admin\Auth\Database\Role $roleModel */
             $roleModel = config('admin.database.roles_model');
             $userTable = config('admin.database.users_table');
-            $connection = config('admin.database.connection');
 
             $form->display('id', 'ID');
             $form->text('username', trans('admin.username'))
-                ->creationRules(['required', "unique:{$connection}.{$userTable}"])
-                ->updateRules(['required', "unique:{$connection}.{$userTable},username,{{id}}"]);
+                ->creationRules(['required', Rule::unique($userTable, 'username')])
+                ->updateRules(function () use ($userTable, $form) {
+                    return [
+                        'required',
+                        Rule::unique($userTable, 'username')->ignore($form->model()->getKey()),
+                    ];
+                });
 
             $form->text('name', trans('admin.name'))->rules('required');
             $form->image('avatar', trans('admin.avatar'));

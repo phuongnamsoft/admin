@@ -118,13 +118,6 @@ Run:
 
 Expected: **PASS**
 
-- [ ] **Step 5: Commit**
-
-```bash
-git add src/Form/Field/UnsupportedLegacyInterventionCallException.php tests/InterventionLegacyCallNormalizerTest.php
-git commit -m "feat(image): add exception for unsupported legacy Intervention chains"
-```
-
 ---
 
 ### Task 2: Normalizer — method aliases and removed methods
@@ -365,13 +358,6 @@ final class InterventionLegacyCallNormalizer
 
 Expected: **PASS**
 
-- [ ] **Step 5: Commit**
-
-```bash
-git add src/Form/Field/InterventionLegacyCallNormalizer.php tests/InterventionLegacyCallNormalizerTest.php
-git commit -m "feat(image): add Intervention legacy call normalizer (aliases, resizeCanvas, resize+closure)"
-```
-
 ---
 
 ### Task 3: Normalizer tests — `resize` edge cases
@@ -415,13 +401,6 @@ public function test_resize_invalid_dimensions_with_closure_throw(): void
 
 Expected: **PASS** (pass-through must remain valid for v3 native `resize` where arity matches).
 
-- [ ] **Step 3: Commit**
-
-```bash
-git add tests/InterventionLegacyCallNormalizerTest.php
-git commit -m "test(image): cover resize+closure and pass-through cases"
-```
-
 ---
 
 ### Task 4: Normalizer tests — legacy five-arg `resizeCanvas`
@@ -464,13 +443,6 @@ public function test_resize_canvas_two_arg_passes_dimensions_only(): void
 ```
 
 Expected: **PASS**
-
-- [ ] **Step 3: Commit**
-
-```bash
-git add tests/InterventionLegacyCallNormalizerTest.php
-git commit -m "test(image): legacy resizeCanvas five-arg mapping"
-```
 
 ---
 
@@ -533,13 +505,6 @@ public function callInterventionMethods($target)
 ```
 
 Expected: **PASS** (existing BrowserKit tests; normalizer unit tests).
-
-- [ ] **Step 3: Commit**
-
-```bash
-git add src/Form/Field/ImageField.php
-git commit -m "feat(image): apply legacy Intervention normalization in callInterventionMethods"
-```
 
 ---
 
@@ -716,13 +681,6 @@ and remove `$image->encode()` without path—replace with **`encodeByPath($path)
 
 Expected: **PASS**
 
-- [ ] **Step 5: Commit**
-
-```bash
-git add src/Form/Field/ImageField.php tests/ImageFieldThumbnailEncodingTest.php
-git commit -m "feat(image): use contain + encodeByPath for ImageField thumbnails"
-```
-
 ---
 
 ### Task 7: Documentation and CHANGELOG
@@ -754,13 +712,6 @@ Add subsection **“ImageField & Intervention Image v3”** (placement: after **
 - Package expects **`intervention/image` ^3**; thumbnails default to **`contain`** with white padding; **`thumbnail()` third dimension** supports `resize` (legacy alias for contain), `contain`, `pad`, `cover`, `coverDown`.
 - Fluent chains: supported aliases and **`resize`+closure** convention; **not** full v2 emulation (no arbitrary constraint closure logic).
 - GD default driver; EXIF/metadata limitations note per [configuration docs](https://image.intervention.io/v3/basics/configuration-drivers).
-
-- [ ] **Step 3: Commit**
-
-```bash
-git add CHANGELOG.md README.md
-git commit -m "docs: ImageField Intervention v3 compatibility and changelog"
-```
 
 ---
 

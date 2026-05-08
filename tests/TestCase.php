@@ -63,6 +63,36 @@ class TestCase extends BaseTestCase
             $this->app['config']->set($key, $value);
         }
 
+        $packageMigrationNames = [
+            '2016_01_04_173148_create_admin_tables',
+            '2024_03_24_084856_create_extensions_table',
+            '2024_08_06_103223_add_menu_ids_to_extensions_table',
+            '2024_09_04_142405_add_extensions_to_table',
+            '2024_12_26_040159_create_settings_table',
+        ];
+
+        Schema::dropIfExists('admin_extensions');
+        Schema::dropIfExists('settings');
+        Schema::dropIfExists('setting_groups');
+
+        if (Schema::hasTable('migrations')) {
+            DB::table('migrations')->whereIn('migration', $packageMigrationNames)->delete();
+        }
+
+        $skeletonMigrationsDir = dirname(__DIR__).'/vendor/laravel/laravel/database/migrations';
+        foreach ([
+            '2016_01_04_173148_create_admin_tables.php',
+            '2024_03_24_084856_create_extensions_table.php',
+            '2024_08_06_103223_add_menu_ids_to_extensions_table.php',
+            '2024_09_04_142405_add_extensions_to_table.php',
+            '2024_12_26_040159_create_settings_table.php',
+        ] as $dupFile) {
+            $dupPath = $skeletonMigrationsDir.'/'.$dupFile;
+            if (is_file($dupPath)) {
+                @unlink($dupPath);
+            }
+        }
+
         $this->artisan('vendor:publish', ['--provider' => 'PNS\Admin\AdminServiceProvider', '--force' => true]);
 
         Schema::defaultStringLength(191);
@@ -86,11 +116,23 @@ class TestCase extends BaseTestCase
 
     protected function tearDown(): void
     {
+        (new Filesystem())->requireOnce(dirname(__DIR__).'/database/migrations/2016_01_04_173148_create_admin_tables.php');
+
         (new CreateAdminTables())->down();
 
         (new CreateTestTables())->down();
 
-        DB::table('migrations')->where('migration', '2016_01_04_173148_create_admin_tables')->delete();
+        Schema::dropIfExists('admin_extensions');
+        Schema::dropIfExists('settings');
+        Schema::dropIfExists('setting_groups');
+
+        DB::table('migrations')->whereIn('migration', [
+            '2016_01_04_173148_create_admin_tables',
+            '2024_03_24_084856_create_extensions_table',
+            '2024_08_06_103223_add_menu_ids_to_extensions_table',
+            '2024_09_04_142405_add_extensions_to_table',
+            '2024_12_26_040159_create_settings_table',
+        ])->delete();
 
         parent::tearDown();
     }
@@ -105,6 +147,8 @@ class TestCase extends BaseTestCase
         $fileSystem = new Filesystem();
 
         $fileSystem->requireOnce(__DIR__.'/migrations/2016_11_22_093148_create_test_tables.php');
+
+        (new CreateTestTables())->down();
 
         (new CreateTestTables())->up();
     }

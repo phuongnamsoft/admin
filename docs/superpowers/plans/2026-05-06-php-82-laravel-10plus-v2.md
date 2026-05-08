@@ -1,12 +1,14 @@
-# PHP 8.2 + Laravel 10/11 — v2.0.0 Implementation Plan
+# PHP 8.1+ + Laravel 10/11 — v2.0.0 Implementation Plan
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use `subagent-driven-development` (recommended) or `executing-plans` to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Goal:** Ship **v2.0.0** with `php:^8.2`, `laravel/framework:^10.0||^11.0`, updated dev stack and tests, CI matrix, and docs so the package installs and runs on supported PHP/Laravel combinations.
+**Goal:** Ship **v2.0.0** with `php:^8.1`, `laravel/framework:^10.0||^11.0`, updated dev stack and tests, CI matrix, and docs so the package installs and runs on supported PHP/Laravel combinations.
 
-**Architecture:** Tighten Composer platform and framework constraints first, resolve dependencies with `composer update`, then fix test/runtime breakages with minimal source edits. Keep `Laravel\BrowserKitTesting\TestCase` by upgrading to **`laravel/browser-kit-testing:^7`**, which supports Laravel 10/11, to avoid rewriting all `visit()` / `see()` tests.
+**PHP / Laravel pairing (important):** **Laravel 11 requires PHP ^8.2** upstream. This package still allows `laravel/framework:^11.0` in Composer for apps on PHP 8.2+, but **PHP 8.1 consumers must stay on Laravel 10** — Composer resolves that automatically when `composer update` runs on PHP 8.1. CI must **exclude** the invalid pair PHP 8.1 + Laravel 11.
 
-**Tech stack:** PHP 8.2+, Laravel 10/11, PHPUnit 10+, Composer 2, optional GitHub Actions.
+**Architecture:** Tighten Composer platform and framework constraints first, resolve dependencies with `composer update`, then fix test/runtime breakages with minimal source edits. Keep `Laravel\BrowserKitTesting\TestCase` by upgrading to **`laravel/browser-kit-testing:^7`**, which supports Laravel 10/11, to avoid rewriting all `visit()` / `see()` tests. Source code must avoid **PHP 8.2-only** language features so the same `src/` runs on PHP 8.1 (see Task 4).
+
+**Tech stack:** PHP 8.1+ (with Laravel 11 only on 8.2+), Laravel 10/11, PHPUnit 10+, Composer 2, optional GitHub Actions.
 
 ---
 
@@ -18,7 +20,7 @@
 | Lockfile | `composer.lock` (regenerated) |
 | PHPUnit | `phpunit.xml.dist` (PHPUnit 10+ schema if required) |
 | Tests base | `tests/TestCase.php` (imports / parent only if needed) |
-| Package source | `src/**/*.php` — only files that fail tests or emit PHP 8.2 / Laravel deprecations |
+| Package source | `src/**/*.php` — only files that fail tests or emit PHP 8.1–8.2 / Laravel deprecations |
 | PHP 7→8 audit | `src/**/*.php`, `src/helpers.php` — removed/changed functions, stricter internal types (optional Rector/PHPStan one-off) |
 | Docs | `README.md`, `CHANGELOG.md`, optional `UPGRADING.md`, `docs/en/change-log.md` if it mirrors releases |
 | CI | Create `.github/workflows/tests.yml` (or extend existing) |
@@ -36,7 +38,7 @@ Edit `composer.json` so the relevant sections match (keep `name`, `authors`, `au
 
 ```json
     "require": {
-        "php": "^8.2",
+        "php": "^8.1",
         "symfony/dom-crawler": "^6.0|^7.0",
         "laravel/framework": "^10.0|^11.0",
         "doctrine/dbal": "^3.0|^4.0",
@@ -64,13 +66,13 @@ cd "d:/templates/projects/packages/admin"
 composer update --with-all-dependencies
 ```
 
-Expected: completes without unresolvable conflicts. If `barryvdh/laravel-elfinder` or another package blocks resolution, run `composer why-not laravel/framework 11.0` (or the blocked version) and bump only that direct dependency to the smallest version that satisfies PHP 8.2 + Laravel 10/11.
+Expected: completes without unresolvable conflicts. If `barryvdh/laravel-elfinder` or another package blocks resolution, run `composer why-not laravel/framework 11.0` (or the blocked version) and bump only that direct dependency to the smallest version that satisfies PHP 8.1 + Laravel 10 (and PHP 8.2+ where Laravel 11 applies). Re-run `composer update` on **PHP 8.1** once to confirm the lock resolves to Laravel 10-only paths for that platform.
 
 - [ ] **Step 3: Commit**
 
 ```bash
 git add composer.json composer.lock
-git commit -m "chore!: require PHP ^8.2 and Laravel ^10|^11 for v2"
+git commit -m "chore!: require PHP ^8.1 and Laravel ^10|^11 for v2"
 ```
 
 ---
@@ -164,7 +166,7 @@ git commit -m "chore(test): align TestCase with Laravel 10/11 skeleton"
 
 ### Task 4: PHP 7.x → 8.x language and built-in API compatibility
 
-**Goal:** Catch **functions, methods, and language constructs** that were valid on PHP 7.x but break or warn on PHP 8.0–8.2 *before* relying only on PHPUnit. PHPUnit and runtime still remain the source of truth; this task reduces surprise fatals and deprecation noise.
+**Goal:** Catch **functions, methods, and language constructs** that were valid on PHP 7.x but break or warn on PHP 8.0–8.2 *before* relying only on PHPUnit. PHPUnit and runtime still remain the source of truth; this task reduces surprise fatals and deprecation noise. Because **8.1 is the package floor**, also avoid introducing **PHP 8.2-only** syntax in `src/` (see Step 4).
 
 **Files:**
 - Read/scan: `src/**/*.php`, `src/helpers.php`
@@ -172,10 +174,10 @@ git commit -m "chore(test): align TestCase with Laravel 10/11 skeleton"
 
 - [ ] **Step 1: Optional automated pass (pick one or both)**
 
-Run from the package root after Task 1’s `composer update` (PHP 8.2):
+Run from the package root after Task 1’s `composer update` (use **PHP 8.1** for the strictest floor check, and re-check on 8.2+ if convenient):
 
-- **Rector** (recommended for mechanical fixes): `composer require --dev rector/rector` then add a minimal `rector.php` targeting sets such as `LevelSetList::UP_TO_PHP_82` and `DeadCode` only if you want safe cleanup; start with `--dry-run` and review diffs. Remove the dev dependency afterward if you do not want it permanent.
-- **PHPStan** with `phpVersion: 80200` (or `81000` minimum) and `treatPhpDocTypesAsCertain: false` initially: surfaces passing `null` into non-nullable internal parameters, wrong arity, and undefined symbols.
+- **Rector** (recommended for mechanical fixes): `composer require --dev rector/rector` then add a minimal `rector.php` targeting **`LevelSetList::UP_TO_PHP_81`** so upgrades do not rewrite code to 8.2-only constructs; optionally run a separate dry-run with `UP_TO_PHP_82` only to list **optional** cleanups that must **not** be applied if 8.1 stays supported (e.g. readonly classes). Add `DeadCode` only if you want safe cleanup; start with `--dry-run` and review diffs. Remove the dev dependency afterward if you do not want it permanent.
+- **PHPStan** with `phpVersion: 80100` (package floor) and `treatPhpDocTypesAsCertain: false` initially: surfaces passing `null` into non-nullable internal parameters, wrong arity, undefined symbols, and accidental 8.2-only APIs.
 
 Expected: a list of concrete files/lines to fix manually if you do not apply Rector patches.
 
@@ -205,10 +207,11 @@ PHP 8+ is stricter about **internal** function arguments (e.g. `strlen(null)`, `
 
 Prefer explicit null checks, `?? ''`, `?? []`, or typed parameters/returns on your own functions so callsites are obvious.
 
-- [ ] **Step 4: Keywords, deprecations, and edge cases**
+- [ ] **Step 4: Keywords, deprecations, edge cases, and PHP 8.1 vs 8.2 language floor**
 
 - Ensure no **reserved words** are used as class/trait/interface names (`Match`, `mixed` as class name, etc.).
 - Replace deprecated **`${var}` string interpolation** (deprecated 8.2) with `{$var}` or concatenation.
+- **Do not use PHP 8.2-only language features** in package `src/` while 8.1 is supported, including: **`readonly` classes**, **disjunctive normal form (DNF) types**, and **standalone `true` / `false` / `null` types** (use docblocks or narrower unions where needed). **`readonly` properties** (PHP 8.1) and other 8.1-safe syntax remain OK.
 - Review **`@` suppression** and custom error handlers: failures that were silent may now surface under PHPUnit’s `failOnDeprecation` / `failOnNotice`.
 
 - [ ] **Step 5: Document findings (short)**
@@ -233,7 +236,7 @@ Expected: either all green or a list of failures.
 - [ ] **Step 2: Fix failures in priority order**
 
 1. **Fatal errors / type errors** in `src/` (constructor signatures, return types, removed Laravel APIs).
-2. **PHP 8.2 deprecations** (e.g. dynamic properties): prefer real declared properties; use `#[\AllowDynamicProperties]` only on legacy value objects where declaration is impractical.
+2. **PHP 8.2 deprecations** when running the suite on 8.2+ (e.g. dynamic properties): prefer real declared properties; use `#[\AllowDynamicProperties]` only on legacy value objects where declaration is impractical. On **PHP 8.1** jobs, focus on fatals and Laravel API drift for Laravel 10.
 3. **Test-only failures** (assertions, HTML changes from Laravel): update test expectations only when the framework output legitimately changed (e.g. dashboard copy).
 
 - [ ] **Step 3: Re-run until green**
@@ -242,13 +245,13 @@ Expected: either all green or a list of failures.
 ./vendor/bin/phpunit --colors=always
 ```
 
-Expected: `OK (N tests, … assertions)`.
+Expected: `OK (N tests, … assertions)` on your primary dev PHP version. Before release, repeat on **PHP 8.1** with **Laravel 10** (the minimum supported pair) if your day-to-day environment is newer.
 
 - [ ] **Step 4: Commit**
 
 ```bash
 git add src/ tests/
-git commit -m "fix: PHP 8.2 and Laravel 10/11 compatibility for v2"
+git commit -m "fix: PHP 8.1+ and Laravel 10/11 compatibility for v2"
 ```
 
 ---
@@ -276,8 +279,12 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        php: ['8.2', '8.3']
+        php: ['8.1', '8.2', '8.3']
         laravel: ['10', '11']
+        exclude:
+          # Laravel 11 requires PHP ^8.2 upstream
+          - php: '8.1'
+            laravel: '11'
     name: PHP ${{ matrix.php }} Laravel ${{ matrix.laravel }}
     steps:
       - uses: actions/checkout@v4
@@ -323,7 +330,7 @@ This repository has **no committed `composer.lock`**, so each CI job may rewrite
 
 ```bash
 git add .github/workflows/tests.yml
-git commit -m "ci: run PHPUnit on PHP 8.2+ with MySQL service"
+git commit -m "ci: run PHPUnit on PHP 8.1+ (Laravel 11 only on 8.2+) with MySQL service"
 ```
 
 ---
@@ -340,8 +347,8 @@ Replace outdated PHP/Laravel lines (e.g. `PHP >= 7.0.0`, `Laravel >= 5.5.0`) wit
 ```markdown
 ## Requirements
 
-- PHP ^8.2
-- Laravel ^10.0 or ^11.0
+- PHP ^8.1
+- Laravel ^10.0 or ^11.0 (Laravel **11** requires PHP **8.2+**; on PHP **8.1** use Laravel **10** only)
 - Fileinfo PHP extension
 ```
 
@@ -354,12 +361,12 @@ In `CHANGELOG.md`, append:
 
 ### Breaking
 
-- Minimum PHP is now **8.2** (`^8.2`).
+- Minimum PHP is now **8.1** (`^8.1`). **Laravel 11** still requires **PHP 8.2+** from upstream; apps on PHP 8.1 must use **Laravel 10**.
 - Minimum Laravel is now **10.x**; supported through **11.x** (`^10.0 || ^11.0` in Composer). Laravel 8–9 and PHP 7.x are no longer supported; use **1.x** for older stacks.
 
 ### Migration
 
-- Bump your app to PHP 8.2+ and Laravel 10 or 11, then `composer require phuongnamsoft/admin:^2.0`.
+- Bump your app to PHP 8.1+ and Laravel 10, or PHP 8.2+ and Laravel 10 or 11, then `composer require phuongnamsoft/admin:^2.0`.
 - Review any overrides of package classes for signature changes after upgrading.
 ```
 
@@ -392,7 +399,7 @@ Expected: clean working tree (except intentional), PHPUnit green.
 - [ ] **Step 2: Tag v2.0.0**
 
 ```bash
-git tag -a v2.0.0 -m "Release v2.0.0: PHP ^8.2, Laravel ^10|^11"
+git tag -a v2.0.0 -m "Release v2.0.0: PHP ^8.1, Laravel ^10|^11"
 git push origin v2.0.0
 ```
 
@@ -402,7 +409,7 @@ git push origin v2.0.0
 
 | Spec item | Task covering it |
 |-----------|------------------|
-| PHP ^8.2 | Task 1 |
+| PHP ^8.1 (Laravel 11 only on PHP ^8.2 upstream) | Tasks 1, 6 |
 | Laravel ^10 \|\| ^11 | Task 1 |
 | Major semver v2 | Tasks 1, 7, 8 |
 | PHP 7→8 functions / language compatibility | Task 4 |
