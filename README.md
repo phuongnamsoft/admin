@@ -60,6 +60,14 @@ Configurations
 ------------
 The file `config/admin.php` contains an array of configurations, you can find the default configurations in there.
 
+## ImageField & Intervention Image v3
+
+This package expects **[intervention/image](https://github.com/Intervention/image) ^3** for `ImageField` uploads and manipulation. The image manager uses the **GD** driver by default; for EXIF orientation and metadata behavior, see the [configuration / drivers documentation](https://image.intervention.io/v3/basics/configuration-drivers).
+
+**Thumbnails:** `ImageField::thumbnail()` generates derivatives with **`contain()`** by default (letterbox with white padding, aspect preserved, optional upscaling). The optional third entry in each size tuple (`$size[2]`) selects the v3 resize behavior: **`resize`** (legacy alias for the same letterbox semantics as before), **`contain`**, **`pad`**, **`cover`**, or **`coverDown`**. Any other value throws **`UnsupportedLegacyInterventionCallException`** with a short hint.
+
+**Queued fluent calls:** Chains recorded via `__call` are normalized for v3 (e.g. **`insert` → `place`**, **`orientate` → `orient`**, **`resize($w, $h, Closure)` → `contain`**, legacy five-argument **`resizeCanvas`** → **`resizeCanvas` / `resizeCanvasRelative`**). This is not full v2 emulation: arbitrary constraint-closure logic beyond that `resize`+closure convention is not supported.
+
 ## Extensions
 
 | Extension                                        | Description                              | laravel-admin                              |

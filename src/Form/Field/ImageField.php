@@ -64,18 +64,25 @@ trait ImageField
     {
         if (!empty($this->interventionCalls)) {
             $image = $this->getImageManager()->read($target);
-
-            foreach ($this->interventionCalls as $call) {
-                call_user_func_array(
-                    [$image, $call['method']],
-                    $call['arguments']
-                );
-            }
-
+            $normalizer = new InterventionLegacyCallNormalizer();
+            $this->applyNormalizedCalls($image, $normalizer);
             $image->save($target);
         }
 
         return $target;
+    }
+
+    /**
+     * @param \Intervention\Image\Interfaces\ImageInterface $image
+     */
+    protected function applyNormalizedCalls($image, InterventionLegacyCallNormalizer $normalizer): void
+    {
+        foreach ($this->interventionCalls as $call) {
+            $steps = $normalizer->normalize($call['method'], $call['arguments']);
+            foreach ($steps as [$method, $args]) {
+                call_user_func_array([$image, $method], $args);
+            }
+        }
     }
 
     /**
@@ -195,35 +202,72 @@ trait ImageField
      */
     protected function uploadAndDeleteOriginalThumbnail(UploadedFile $file)
     {
+        $normalizer = new InterventionLegacyCallNormalizer();
+
         foreach ($this->thumbnails as $name => $size) {
-            // We need to get extension type ( .jpeg , .png ...)
             $ext = pathinfo($this->name, PATHINFO_EXTENSION);
-
-            // We remove extension from file name so we can append thumbnail type
             $path = Str::replaceLast('.'.$ext, '', $this->name);
-
-            // We merge original name + thumbnail name + extension
             $path = $path.'-'.$name.'.'.$ext;
 
-            /** @var \Intervention\Image\Image $image */
             $image = $this->getImageManager()->read($file);
 
             $action = $size[2] ?? 'resize';
-            
-            // Resize image with aspect ratio
-            $image->$action($size[0], $size[1], function ($constraint) {
-                $constraint->aspectRatio();
-            })->resizeCanvas($size[0], $size[1], 'center', false, '#ffffff');
+            $targetWidth = (int) $size[0];
+            $targetHeight = (int) $size[1];
+
+            $method = $this->resolveThumbnailAction($action);
+            $arguments = $this->thumbnailArgumentsFor($method, $targetWidth, $targetHeight);
+
+            $steps = $normalizer->normalize($method, $arguments);
+            foreach ($steps as [$m, $args]) {
+                call_user_func_array([$image, $m], $args);
+            }
+
+            $relativePath = "{$this->getDirectory()}/{$path}";
+            $encoded = $image->encodeByPath($path);
+            $binary = (string) $encoded;
 
             if (!is_null($this->storagePermission)) {
-                $this->storage->put("{$this->getDirectory()}/{$path}", $image->encode(), $this->storagePermission);
+                $this->storage->put($relativePath, $binary, $this->storagePermission);
             } else {
-                $this->storage->put("{$this->getDirectory()}/{$path}", $image->encode());
+                $this->storage->put($relativePath, $binary);
             }
         }
 
         $this->destroyThumbnail();
 
         return $this;
+    }
+
+    private function resolveThumbnailAction(string $action): string
+    {
+        return match ($action) {
+            'resize', 'contain' => 'contain',
+            'pad' => 'pad',
+            'cover' => 'cover',
+            'coverDown' => 'coverDown',
+            default => throw new UnsupportedLegacyInterventionCallException(
+                $action,
+                'Unsupported thumbnail action for ImageField::thumbnail() size tuple.',
+                'Use resize (letterboxed contain), contain, pad, cover, or coverDown.'
+            ),
+        };
+    }
+
+    /**
+     * @return array<int, mixed>
+     */
+    private function thumbnailArgumentsFor(string $method, int $targetWidth, int $targetHeight): array
+    {
+        $background = 'ffffff';
+        $position = 'center';
+
+        return match ($method) {
+            'contain' => [$targetWidth, $targetHeight, $background, $position],
+            'pad' => [$targetWidth, $targetHeight, $background, $position],
+            'cover' => [$targetWidth, $targetHeight, $position],
+            'coverDown' => [$targetWidth, $targetHeight, $position],
+            default => [$targetWidth, $targetHeight],
+        };
     }
 }
