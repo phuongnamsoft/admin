@@ -452,6 +452,6 @@ abstract class Extension
 
     public static function getModel() {
         $extensionModel = AdminHelper::getExtensionsModelClass();
-        return $extensionModel::where('slug', self::SLUG)->first();
+        return $extensionModel::where('slug', static::SLUG)->first();
     }
 }
